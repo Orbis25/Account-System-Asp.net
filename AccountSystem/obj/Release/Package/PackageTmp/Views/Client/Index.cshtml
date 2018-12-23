@@ -1,0 +1,177 @@
+﻿@{ 
+    ViewBag.Title = "Clientes";
+}
+
+@model  Model.ViewModels.IndexPageViewModel
+
+<div class="text-center m-3"><i class="far fa-user text-primary" style="font-size:100px"></i></div>
+<h2 class="text-center ">Listado de Clientes </h2>
+<div class="mt-3">Cantidad de Clientes : <span><b>@Model.TotalOfRegister</b></span></div>
+<div class="row ml-1 justify-content-between">
+    <div class="col-">
+        @Html.ActionLink(" ", "Client", "Home", null, new { @class = "btn btn-outline-info mt-1 fas fa-arrow-left" })
+        @Html.ActionLink(" ", "Create", null, new { @class = "btn btn-outline-danger mt-1 fas fa-plus-square" })
+        <button class="btn btn-outline-info fas fa-search mt-1 " data-toggle="modal" data-target="#ModalSerach"></button>
+    </div>
+    <div class="col- mr-3">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#ModalInfo">Ayuda</button>
+    </div>
+</div>
+
+<hr />
+<table class="table" id="example">
+    <thead class="bg-primary">
+        <tr>
+            <th scope="col" class="text-white">Nombre y Apellido</th>
+            <th scope="col" class="text-white">Numero telefonico</th>
+            <th scope="col" class="text-white">Accion</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Clients)
+        {
+            <tr>
+                <th scope="row">@item.Name @item.LastName</th>
+                <td>@item.PhoneNumber</td>
+                <td>
+                    @Html.ActionLink(" ", "Delete", new { id = item.Id }, new { @class = "btn btn-danger fas fa-trash-alt" })
+                    <b> | </b>
+                    @Html.ActionLink(" ", "Update", null, new { id = item.Id }, new { @class = "btn btn-info far fa-edit" })
+                    <b> | </b>
+                    @Html.ActionLink(" ", "Add", "AccountClient", new { id = item.Id }, new { @class = " btn btn-success fas fa-plus" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalSerach" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Buscar Cliente</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body text-xl-center">
+                <div>
+                    <h1 class="fas fa-search text-center"></h1>
+                </div>
+                <div>
+                    <div class="row justify-content-sm-center">
+                        <div class="col-">
+                            <form action="/Client/Search" id="formAddAccount" class="form-group" method="get">
+                                <input type="text" class="form-control mt-3" name="parameter" value="" placeholder="Ingrese para buscar" />
+                                <button type="submit" class="mt-3 btn btn-primary">Buscar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Informacion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body ">
+                <div>
+                    <div class="text-center mb-5">
+                        <h1 class="fas fa-info text-center"></h1>
+                        <b class="text-center">nformacion</b>
+                    </div>
+
+                    <div>
+
+                        <button class="btn btn-outline-info fas fa-arrow-left mt-1 "></button>
+                        <span class="mt-1">Vuelve a la pagina de inicio de clientes</span>
+                    </div>
+                    <hr />
+                    <div>
+                        <button class="btn btn-outline-danger fas fa-plus-square mt-1 "></button>
+                        <span class="mt-1">Redirige a una pagina para crear un cliente</span>
+                    </div>
+                    <hr />
+                    <div>
+                        <button class="btn btn-outline-info fas fa-search mt-1 "></button>
+                        <span class="mt-1">Lanza una ventana para buscar un cliente</span>
+                    </div>
+                    <hr />
+                    <div>
+                        <button class="btn btn-outline-info fas far fa-edit mt-1 "></button>
+                        <span class="mt-1">Redirige a una pagina para editar el cliente seleccionado</span>
+                    </div>
+                    <hr />
+                    <div>
+                        <button class="btn btn-outline-danger fas fa-trash-alt mt-1 "></button>
+                        <span class="mt-1">Redirige a una pagina para confirmar que desea eliminar un cliente</span>
+                    </div>
+                    <hr />
+                    <div>
+                        <button class="btn btn-outline-success fas fa-plus mt-1 "></button>
+                        <span class="mt-1">Redirige a una pagina para Crear una cuenta</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="row justify-content-sm-center">
+                        <div class="col-">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{ var page = ViewBag.pagination;}
+
+@if (page == "1")
+{
+    @Html.Partial("_PaginationSearchPartial", Model)
+}
+else
+{
+    @Html.Partial("_PaginationPartial", Model)
+}
+
+<script src="~/Scripts/sweetalert.min.js"></script>
+
+@if (ViewBag.response == 1)
+{
+    <script>
+        swal("Buen Trabajo!", "Cliente Registrado Correctamente!", "success");
+    </script>
+}
+else if (ViewBag.response == 3)
+{
+    <script>
+        swal("Operacion Realizada Con Exito!", "Cliente Eliminado!", "success");
+    </script>
+}
+else if (ViewBag.response == 5)
+{
+    <script>
+        swal("Operacion Realizada Con Exito!", "Cliente Actualizado!", "success");
+    </script>
+}
+
+

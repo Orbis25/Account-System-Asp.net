@@ -1,0 +1,32 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>PageNotFound</title>
+    <link rel="icon" type="image/png" href="~/Content/Icon/favicon-16x16.png" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container"> 
+        <div class="row justify-content-center">
+            <div class="col-">
+                <img src="~/Content/img/404.gif" alt="Error 404" />
+            </div>
+            <div>
+                Lo sentimos Pagina o Recurso no encontrado para volver al inicio pulse aqui
+            </div>
+            <div class="ml-1">
+                @Html.ActionLink("Volver", "Index", "Home" , null , null)
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>

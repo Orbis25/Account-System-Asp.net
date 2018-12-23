@@ -1,0 +1,47 @@
+﻿
+@{ 
+    ViewBag.Title = "Inicio";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-around">
+        <div class="col- mt-1">
+            <div class="card" style="width: 30rem;">
+                <div class="card-body">
+                    <div class="text-center" ><i class="far fa-user text-primary" style="font-size:200px"></i></div>
+                    <h5 class="card-title text-center m-3" >Clientes</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Mantenimiento de Clientes</h6>
+                    <p class="card-text">
+                        En esta parte puedes realizar las siguientes acciones:
+                        <ul>
+                            <li>Agregar Clientes</li>
+                            <li>Ver , Actualizar y eliminar Clientes</li>
+                            <li>Crear Cuentas para Clientes</li>
+                        </ul>
+                    </p>
+                    @Html.ActionLink("Entrar", "Client", null, new { @class = "btn btn-primary btn-block " })
+                </div>
+            </div>
+        </div>
+        <div class="col-  mt-1 ">
+            <div class="card " style="width: 30rem;">
+                <div class="card-body">
+                    <div class="text-center"><i class="fas fa-archive text-dark" style="font-size:200px"></i></div>
+                    <h5 class="card-title text-center m-3">Proximamente Inventario</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Mantenimiento de Productos</h6>
+                    <p class="card-text">
+                        En esta parte podras realizar las siguientes acciones:
+                        <ul>
+                            <li>Agregar Productos</li>
+                            <li>Ver , Actualizar y eliminar Productos</li>
+                            <li>Levar la lista de todos los productos</li>
+                        </ul>
+                    </p>
+                    <button class="btn btn-dark btn-block">Entrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

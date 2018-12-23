@@ -1,0 +1,222 @@
+﻿@{
+    ViewBag.Title = "Detalle de Cuenta";
+}
+@model Model.ViewModels.DetailPageViewModel
+
+<h1 class=" mt-5">Detalle de Cuenta</h1>
+
+<div class="container mt-5">
+    <div class="row ">
+        <div class="col- mt-2">
+            <div class="card " style="width: 15rem;">
+                <div class="card-body">
+                    <h5 class="card-title">@Model.Account.Name</h5>
+                    <h6 class="card-subtitle mb-2 text-muted"><i class="far fa-user"></i> Cliente : @Model.Account.Client.Name @Model.Account.Client.LastName</h6>
+                    <h6 class="card-subtitle mb-2 text-muted"><i class="far fa-money-bill-alt"></i> Total :  $@Model.Account.Total </h6>
+
+                </div>
+            </div>
+            @Html.ActionLink("Volver", "Index", "AccountClient", null, new { @class = "btn btn-info mt-2 " })
+        </div>
+        <div class="col- mt-2 ml-3">
+            <div class="card " style="width: 13rem;">
+                <div class="card-body">
+
+                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal">
+                        Agregar Credito
+                    </button>
+                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal2">
+                        Abonar
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col- mt-2 ml-3">
+            <div class="card " style="width: 13rem;">
+                <div class="card-body">
+                    <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModal3">
+                        Saldar
+                    </button>
+                    @Html.ActionLink("Generar Constancia", "GeneratePdf", "AccountClient", new { id = Model.Account.Id }, new { @class = "btn btn-danger mt-2 " })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<table class="table" id="example">
+    <thead class="bg-primary">
+        <tr>
+            <th scope="col" class="text-white">Credito Tomado</th>
+            <th scope="col" class="text-white">Fecha</th>
+            <th scope="col" class="text-white">Descripcion</th>
+            <th scope="col" class="text-white">Accion</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Account.Debs)
+        {
+            <tr>
+                <th scope="row">@item.Money</th>
+                <th scope="row">@item.DateTime.ToShortDateString()</th>
+                <th scope="row">@item.Description</th>
+                <th scope="row">
+                    @Html.ActionLink(" ", "Delete", "Deb", new { id = item.Id }, new { @class = "btn btn-danger fas fa-trash-alt" })
+                    <b> | </b>
+                    @Html.ActionLink(" ", "Update", "Deb", new { id = item.Id }, new { @class = "btn btn-info far fa-edit" })
+                </th>
+            </tr>
+        }
+    </tbody>
+</table>
+<!--Modal Add-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Credito</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="col-">
+                        @Html.AntiForgeryToken()
+                        <form action="/Deb/Add" id="Debs" class="form-group" method="post">
+                            <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                            <div>
+                                <label for="Money">Cantidad</label>
+
+                                <input type="text" id="Mount" lang="es" class="form-control" name="Money" required placeholder="Ejemplo (99,99) " value="" />
+                            </div>
+                            <div>
+                                <label for="Description">Descripcion</label>
+                                <textArea name="Description" class="form-control"></textArea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Agregar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Abono</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/AccountClient/Pay" id="pay" class="form-group" method="post">
+                    <div>
+                        <label>Monto</label>
+                        <input type="text" class="form-control" name="Amount" value="" placeholder="Ejemplo (99,99)" />
+                        <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Abonar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Saldar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>¿Seguro que desea saldar la cuenta?</div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    @Html.ActionLink("Saldar", "PayOff", new { id = Model.Account.Id }, new { @class = "btn btn-success" })
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/Forms/Main.js"></script>
+<script src="~/Scripts/sweetalert.min.js"></script>
+
+@{ var page = ViewBag.pagination;}
+
+@if (page == "1")
+{
+    @Html.Partial("_PaginationSearchPartial", Model)
+}
+else
+{
+    @Html.Partial("_PaginationPartial", Model)
+}
+
+@if (ViewBag.response == 10)
+{
+    <script>
+        swal("Operacion Realizada Con Exito!", "Monto Agregado!", "success");
+    </script>
+}
+else if (ViewBag.Response == 11)
+{
+    <script>
+        swal("Operacion Realizada Con Exito!", "Monto Actualizado!", "success");
+    </script>
+}
+else if (ViewBag.Response == 12)
+{
+    <script>
+        swal("Operacion Realizada Con Exito!", "Monto Eliminado!", "success");
+    </script>
+}
+else if (ViewBag.Response == 13)
+{
+    <script>
+        swal("ha ocurrido un error!", "Revise que el campo monto no este vacio, No sea negativo, Contenga letras o puntos (99.9) o ha sobrepasado el limite de caracteres!", "error");
+    </script>
+}
+else if (ViewBag.Response == 14)
+{
+    <script>
+        swal("Operacion Realizada Con Exito!", "Se le ha abonado dinero a su cuenta", "success");
+    </script>
+}
+else if (ViewBag.Response == 15)
+{
+    <script>
+        swal("ha ocurrido un error!", "El monto que desea abonar es mayor que el total", "error");
+    </script>
+}
+else if (ViewBag.Response == 16)
+{
+    <script>
+        swal("Operacion Realizada Con Exito!", "Cuenta Saldada Con exito", "success");
+    </script>
+}
+else if (ViewBag.Response == 17)
+{
+    <script>
+        swal("Lo sentimos!", "Este cliente no tienes deudas", "warning");
+    </script>
+}
+

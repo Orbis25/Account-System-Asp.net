@@ -1,0 +1,47 @@
+﻿@{ 
+    ViewBag.Title = "Agregar";
+}
+<h2 class="m-4">Agregar Cliente</h2>
+<hr />
+
+<div class="container">
+    <div class="row justify-content-start">
+        @Html.AntiForgeryToken()
+        <div class="col-6">
+            <form action="/Client/Create" id="form" class="form-group" method="post">
+                <div>
+                    <label for="Name"><span class="text-danger"> * </span>Nombre</label>
+                    <input type="text" class="form-control " name="Name" value="" required />
+                </div>
+                <div>
+                    <label for="LastName"><span class="text-danger"> * </span>Apellido</label>
+                    <input type="text" class="form-control" name="LastName" value="" required />
+                </div>
+                <div>
+                    <label for="PhoneNumber"><span class="text-danger"> * </span>Telefono / Celular</label>
+                    <input type="text" class="form-control" name="PhoneNumber" id="PhoneNumber" value="" required />
+                    <span class="text-danger" id="MinNumber"></span>
+                </div>
+                <div class="mt-2">
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                    @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-info" })
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/Forms/Main.js"></script>
+<script src="~/Scripts/sweetalert.min.js"></script>
+
+@if (ViewBag.response != null)
+{
+    <script>
+        swal("Ups Ha ocurrido un error!", "Quizas sus Credenciales estan mal colocados porfavor revise!", "error");
+    </script>
+}
+
+
+

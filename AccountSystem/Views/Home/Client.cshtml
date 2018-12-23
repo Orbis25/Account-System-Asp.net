@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "Cliente";
+}
+<div class="text-center m-3"><i class="far fa-user text-primary" style="font-size:100px"></i></div>
+<h2 class=" text-center">Clientes</h2>
+<div class="">
+    @Html.ActionLink(" ", "Index", null, new { @class = "btn btn-outline-info mt-5 fas fa-arrow-left" })
+</div>
+<hr />
+
+<div class="container mt-5">
+    <div class="row justify-content-around">
+        <div class="col- mt-1">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <div class="text-center"><i class="far fa-user text-primary" style="font-size:100px"></i></div>
+                    <h5 class="card-title text-center m-3">Clientes</h5>
+                    @Html.ActionLink("Entrar", "Index", "Client", null, new { @class = "btn btn-primary btn-block" })
+
+                </div>
+            </div>
+        </div>
+        <div class="col- mt-1">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <div class="text-center"><i class="far fa-plus-square text-primary" style="font-size:100px"></i></div>
+                    <h5 class="card-title text-center m-3">Cuentas</h5>
+                    @Html.ActionLink("Entrar", "Index", "AccountClient", null, new { @class = "btn btn-primary btn-block" })
+                </div>
+            </div>
+        </div>
+        <div class="col- mt-1">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <div class="text-center"><i class="fas fa-clipboard-list text-dark" style="font-size:100px"></i></div>
+                    <h5 class="card-title text-center m-2">Proximamente Lista Negra</h5>
+                    <button class="btn btn-dark btn-block">Entrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+

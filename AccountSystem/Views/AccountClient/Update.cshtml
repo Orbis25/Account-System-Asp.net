@@ -1,0 +1,37 @@
+﻿@{ 
+    ViewBag.Title = "Actualizar";
+}
+@model Model.Account
+
+<h2 class="text-center mt-5">Actualizar la cuenta @Model.Name</h2>
+<hr />
+<div class="row justify-content-center mt-5">
+    <div class="col-">
+        @Html.AntiForgeryToken()
+        <form action="/AccountClient/Update" id="formAddAccount" class="form-group" method="post">
+            <div>
+                <label for="Name">Nombre de la Cuenta</label>
+                <input type="text" class="form-control" name="Name" value="@Model.Name" />
+                <input type="hidden" class="form-control" name="Id" value="@Model.Id" />
+            </div>
+            <div class="mt-2">
+                <button type="submit" class="btn btn-success">Actualizar</button>
+                @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-primary" })
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/Forms/Main.js"></script>
+<script src="~/Scripts/sweetalert.min.js"></script>
+
+
+@if (ViewBag.response == 7)
+{
+    <script>
+    swal("Ha ocurrido un error!", "ha excedido la cantidad de caracteres maxima o el campo por alguna razon quedo vacio!", "error");
+    </script>
+}
+
+
