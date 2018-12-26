@@ -20,17 +20,21 @@
                                             <tr>
                                                 <th>Nombre</th>
                                                 <th>Celular</th>
-                                                <th>Rol</th>
-                                                <th>Acciones</th>
+                                                <th>Correo</th>
+                                                <th>Accion</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach (var item in Model.Clients)
                                             {
+                                                if (item.ApplicationUser.Email == User.Identity.Name) 
+                                                {
+                                                    continue;
+                                                };
                                             <tr>
                                                 <td scope="row">@item.Name @item.LastName</td>
                                                 <td>@item.PhoneNumber</td>
-                                                <td class="process">Admin</td>
+                                                <td>@item.ApplicationUser.Email</td>
                                                 <td>
                                                     @Html.ActionLink(" ", "Delete", new { id = item.Id }, new { @class = "btn btn-danger fas fa-trash-alt" })
                                                     <b> | </b>
@@ -40,7 +44,6 @@
                                                 </td>
                                             </tr>
                                             }
-                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -67,8 +70,6 @@
         </div>
     </div>
 </div>
-
-<script src="~/Scripts/sweetalert.min.js"></script>
 
 @if (ViewBag.response == 1)
 {

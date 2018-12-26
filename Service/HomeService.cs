@@ -20,7 +20,7 @@ namespace Service
             int result = 0;
             try
             {
-                result = _dbContext.Users.ToList().Count();
+                result = (_dbContext.Users.ToList().Count() - 1);
             }
             catch (Exception)
             {

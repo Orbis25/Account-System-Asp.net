@@ -79,6 +79,7 @@ namespace Service
                 var clients = _dbContext.Clients
                          .OrderBy(x => x.Id)
                          .Skip((page - 1) * pageToQuantity)
+                         .Include(x => x.ApplicationUser)
                          .Take(pageToQuantity)
                          .ToList();
                 var TotalOfRegisters = _dbContext.Clients.Count();
@@ -143,8 +144,6 @@ namespace Service
             catch (Exception)
             {
                 result = null;
-
-                //throw;
             }
             return result;
         }

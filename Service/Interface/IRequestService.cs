@@ -13,5 +13,7 @@ namespace Service.Interface
         Task<bool> Add(Request model);
         bool Delete(int id);
         IEnumerable<Request> GetAll(int page = 1);
+        IEnumerable<Request> GetAllByIdUser(string id);
+        bool Update(Request model);
     }
 }

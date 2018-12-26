@@ -131,6 +131,10 @@
     <Compile Include="Migrations\201812222250197_RelationShipClientAndApplicationUser3.Designer.cs">
       <DependentUpon>201812222250197_RelationShipClientAndApplicationUser3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812230304245_Requests.cs" />
+    <Compile Include="Migrations\201812230304245_Requests.Designer.cs">
+      <DependentUpon>201812230304245_Requests.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -177,6 +181,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812222250197_RelationShipClientAndApplicationUser3.resx">
       <DependentUpon>201812222250197_RelationShipClientAndApplicationUser3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812230304245_Requests.resx">
+      <DependentUpon>201812230304245_Requests.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

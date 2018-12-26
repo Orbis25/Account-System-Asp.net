@@ -14,11 +14,18 @@ namespace AccountSystem.Controllers
     public class ClientController : Controller
     {
         private readonly IClientService _repository;
+        private readonly IAccountService _accountService;
+        private readonly IRequestService _requestService;
         private static int _id;
-        public ClientController(IClientService repository)
+        public ClientController(IClientService repository ,
+            IAccountService accountService ,
+            IRequestService requestService)
         {
             _repository = repository;
-            
+            _accountService = accountService;
+            _requestService = requestService;
+
+
         }
         public ActionResult Index(int page = 1)
         {
@@ -44,32 +51,6 @@ namespace AccountSystem.Controllers
             return View();
         }
 
-        [HttpPost]
-        public ActionResult Create(Client model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    var result = _repository.Add(model);
-                    if (result)
-                    {
-                        Alerts.Type = 1;
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        Alerts.Type = 2;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            ViewBag.response = Alerts.Type;
-            return View(model);
-        }
 
         [HttpGet]
         public ActionResult Delete(int id)
@@ -86,60 +67,7 @@ namespace AccountSystem.Controllers
             }
 
         }
-
         
-        public RedirectToRouteResult SuccessDelete()
-        {
-            try
-            {
-                if (_repository.Delete(_id))
-                {
-                    Alerts.Type = 3;
-                }
-                else
-                {
-                    Alerts.Type = 4;
-                }
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            return RedirectToAction("Index");
-
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Update(Client model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    if (_repository.Update(model))
-                    {
-                        Alerts.Type = 5;
-                        return RedirectToAction("UserProfile","Account",new { id = model.ApplicationUserId});
-                    }
-                }
-                else
-                {
-                    ViewBag.response = 6;
-                    return View(model);
-                }
-            }
-            catch (Exception)
-            {
-                ViewBag.response = 6;
-                return View(model);
-
-                throw;
-            }
-            return View(model);
-        }
 
         [HttpGet]
         public ActionResult Search(string parameter = "" , int page = 1)
@@ -156,6 +84,45 @@ namespace AccountSystem.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+
+        //V2.0
+        //---------------------------------------------------------
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Update(Client model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (_repository.Update(model))
+                    {
+                        UpdateUserNameViewModelAppUs user = new UpdateUserNameViewModelAppUs { Id = model.ApplicationUserId ,
+                        UserName = model.Name};
+                        _accountService.UpdateUserName(user);
+                        Alerts.Type = 5;
+                        return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
+                    }
+                }
+                else
+                {
+                    ViewBag.response = 6;
+                    return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.response = 6;
+                return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
+
+                throw;
+            }
+            return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
+        }
+
 
     }
 }

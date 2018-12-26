@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity;
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -60,7 +62,7 @@
                             <a class="js-arrow" href="~/Content/#">
                                 <i class="fas fa-tachometer-alt"></i>Inicio
                             </a>
-                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+                            <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
                                     <a href="~/Content/index.html">Dashboard 1</a>
                                 </li>
@@ -73,7 +75,7 @@
                                 <li>
                                     <a href="~/Content/index4.html">Dashboard 4</a>
                                 </li>
-                            </ul> 
+                            </ul>
                         </li>
                         <li>
                             <a href="~/Content/chart.html">
@@ -164,7 +166,7 @@
         <!-- MENU SIDEBAR-->
         <aside class="menu-sidebar d-none d-lg-block">
             <div class="logo">
-                @{ 
+                @{
                     string title = User.IsInRole("Admin") ? "Panel Administrador" : "Panel Usuario";
                 }
                 @title
@@ -172,35 +174,53 @@
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li class="active has-sub">
-                            <a class="js-arrow" href="@Url.Action("Index","Home")">
-                                <i class="fas fa-home"></i>Inicio
-                            </a>
-                        </li>
-                        @{
-                            if (User.IsInRole("Admin"))
-                            {
-                                <li>
-                                    <a href="@Url.Action("Index","Client")">
-                                        <i class="fas fa-user"></i>Usuarios
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index","AccountClient")">
-                                        <i class="fas fa-credit-card"></i>Cuentas
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("AllRequests","Request")">
-                                        <i class="fas fa-hand-paper"></i>Solicitudes
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fas fa-calendar-alt"></i>Reportes
-                                    </a>
-                                </li>
-                            }
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="@Url.Action("Index", "Home")">
+                                    <i class="fas fa-home"></i>Inicio
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Client")">
+                                    <i class="fas fa-user"></i>Usuarios
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "AccountClient")">
+                                    <i class="fas fa-credit-card"></i>Cuentas
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AllRequests", "Request")">
+                                    <i class="fas fa-hand-paper"></i>Solicitudes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fas fa-calendar-alt"></i>Reportes
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="@Url.Action("Index", "Home")">
+                                    <i class="fas fa-home"></i>Inicio
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("MyRequests", "Request",new { id = User.Identity.GetUserId()})">
+                                    <i class="fas fa-hand-paper"></i>Mis solicitudes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("MyRequests", "Request")">
+                                    <i class="fas fa-credit-card"></i>Estado de Cuenta
+                                </a>
+                            </li>
                         }
                     </ul>
                 </nav>
@@ -305,6 +325,7 @@
     <script src="~/Content/vendor/chartjs/Chart.bundle.min.js"></script>
     <script src="~/Content/vendor/select2/select2.min.js">
     </script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
 
     <!-- Main JS-->
     <script src="~/Content/js/main.js"></script>

@@ -508,7 +508,7 @@
     <None Include="Properties\PublishProfiles\AccountSystem - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\AccountSystem - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\Forms\Main.js" />
+    <Content Include="Scripts\Functions\functions.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -567,9 +567,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\Client.cshtml" />
     <Content Include="Views\Client\Index.cshtml" />
-    <Content Include="Views\Client\Create.cshtml" />
     <Content Include="Views\Shared\_PaginationPartial.cshtml" />
-    <Content Include="Views\Client\Update.cshtml" />
     <Content Include="Views\Shared\_PaginationSearchPartial.cshtml" />
     <Content Include="Views\AccountClient\Index.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
@@ -592,6 +590,10 @@
     <Content Include="Views\Shared\_NavPartial.cshtml" />
     <Content Include="Views\Account\UserProfile.cshtml" />
     <Content Include="Views\Request\AllRequests.cshtml" />
+    <Content Include="Views\Request\MyRequests.cshtml" />
+    <Content Include="Views\Client\DisplayTemplates\Boolean.cshtml" />
+    <Content Include="Views\Client\DisplayTemplates\DateTime.cshtml" />
+    <Content Include="Views\Shared\_JsFunctionPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
