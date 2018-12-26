@@ -135,6 +135,14 @@
     <Compile Include="Migrations\201812230304245_Requests.Designer.cs">
       <DependentUpon>201812230304245_Requests.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812260400280_CreatedAtInApplicationUser.cs" />
+    <Compile Include="Migrations\201812260400280_CreatedAtInApplicationUser.Designer.cs">
+      <DependentUpon>201812260400280_CreatedAtInApplicationUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812260415553_ProfileUpdated.cs" />
+    <Compile Include="Migrations\201812260415553_ProfileUpdated.Designer.cs">
+      <DependentUpon>201812260415553_ProfileUpdated.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -184,6 +192,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812230304245_Requests.resx">
       <DependentUpon>201812230304245_Requests.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812260400280_CreatedAtInApplicationUser.resx">
+      <DependentUpon>201812260400280_CreatedAtInApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812260415553_ProfileUpdated.resx">
+      <DependentUpon>201812260415553_ProfileUpdated.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

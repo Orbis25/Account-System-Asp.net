@@ -39,6 +39,7 @@ namespace AccountSystem.Controllers
             if (TempData["request"] != null)
             {
                 ViewBag.status = TempData["request"].ToString();
+                ViewBag.icon = TempData["icon"].ToString();
             }
 
             return View(model);
@@ -52,12 +53,26 @@ namespace AccountSystem.Controllers
         {
             if (model.Descripcion != null)
             {
-                if(await _requestService.Add(model))
+                if (_clientServece.GetByIdUser(model.ApplicationUserId).ProfileUpdated)
                 {
-                    TempData["request"] = "Solicitud enviada correctamente";
+                    if (await _requestService.Add(model))
+                    {
+                        TempData["request"] = "Solicitud enviada correctamente";
+                        TempData["icon"] = "success";
+                    }
+                    else
+                    {
+                        TempData["request"] = "Upss!, algo ha ocurrido no se ha enviado la solicitud";
+                        TempData["icon"] = "error";
+                    }
+                }
+                else
+                {
+                    TempData["request"] = "Lo sentimos!, Para poder hacer solicitudes debe completar su perfil";
+                    TempData["icon"] = "error";
                 }
             }
-            return RedirectToAction("MyRequests", new { id = User.Identity.GetUserId() });
+            return RedirectToAction("MyRequests", new { id = User.Identity.GetUserId()});
         }
 
         [Authorize(Roles = "Admin")]

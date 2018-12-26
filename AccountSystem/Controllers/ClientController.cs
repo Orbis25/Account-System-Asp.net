@@ -41,7 +41,6 @@ namespace AccountSystem.Controllers
             catch (Exception)
             {
                 return RedirectToAction("PageNotFound", "Error");
-                throw;
             }
         }
 
@@ -49,23 +48,6 @@ namespace AccountSystem.Controllers
         public ViewResult Create()
         {
             return View();
-        }
-
-
-        [HttpGet]
-        public ActionResult Delete(int id)
-        {
-            if(_repository.NameOfClient(id) != "No hay elementos")
-            {
-                _id = id;
-                ViewBag.PersonName = _repository.NameOfClient(id);
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
-
         }
         
 
@@ -123,6 +105,11 @@ namespace AccountSystem.Controllers
             return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
         }
 
+        [HttpPost]
+        public JsonResult Remove(int id)
+        {
+            return Json(_repository.Delete(id));
+        }
 
     }
 }

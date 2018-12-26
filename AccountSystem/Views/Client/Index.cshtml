@@ -36,9 +36,7 @@
                                                 <td>@item.PhoneNumber</td>
                                                 <td>@item.ApplicationUser.Email</td>
                                                 <td>
-                                                    @Html.ActionLink(" ", "Delete", new { id = item.Id }, new { @class = "btn btn-danger fas fa-trash-alt" })
-                                                    <b> | </b>
-                                                    @Html.ActionLink(" ", "Update", null, new { id = item.Id }, new { @class = "btn btn-info far fa-edit" })
+                                                    <button class="btn btn-danger fas fa-trash-alt" onclick="remove(@item.Id,'Client/Remove','desea eliminar este cliente')" ></button>
                                                     <b> | </b>
                                                     @Html.ActionLink(" ", "Add", "AccountClient", new { id = item.Id }, new { @class = " btn btn-success fas fa-plus" })
                                                 </td>
@@ -61,7 +59,6 @@
                                         }
                                     </div>
                                 </div>
-                                <!-- END DATA TABLE-->
                             </div>
                         </div>
                     </div>
@@ -70,24 +67,6 @@
         </div>
     </div>
 </div>
-
-@if (ViewBag.response == 1)
-{
-    <script>
-        swal("Buen Trabajo!", "Cliente Registrado Correctamente!", "success");
-    </script>
-}
-else if (ViewBag.response == 3)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cliente Eliminado!", "success");
-    </script>
-}
-else if (ViewBag.response == 5)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cliente Actualizado!", "success");
-    </script>
-}
+@Html.Partial("_JsFunctionPartial")
 
 

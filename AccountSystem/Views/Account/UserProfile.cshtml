@@ -2,7 +2,6 @@
 @{
     ViewBag.Title = "UserProfile";
 }
-
 <div class="page-container">
     <!-- MAIN CONTENT-->
     <div class="main-content">
@@ -12,10 +11,23 @@
                     <div class="col-md-12">
                         <div class="overview-wrap">
                             <h2 class="title-1 mb-5">Bienvenido @User.Identity.Name</h2>
+                           
                             <button class="au-btn au-btn-icon au-btn--blue" data-toggle="modal" data-target="#mediumModal">
                                 <i class="zmdi zmdi-plus"></i>Actualizar
                             </button>
                         </div>
+                    </div>
+                    <div class="col-md-12">
+                        @if (!Model.ProfileUpdated && !User.IsInRole("Admin"))
+                        {
+                            <div class="sufee-alert alert with-close alert-warning alert-dismissible fade show">
+                                <span class="badge badge-pill badge-warning">Importante</span>
+                                Porfavor actualize su perfil para poder hacer solicitudes de cuentas, gracias
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
                     </div>
                 </div>
                 <div class="col-md-4">

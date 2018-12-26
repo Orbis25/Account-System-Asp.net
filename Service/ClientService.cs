@@ -29,10 +29,9 @@ namespace Service
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
-                throw;
             }
         }
 
@@ -49,7 +48,6 @@ namespace Service
             catch (Exception)
             {
                 return false;
-                throw;
             }
 
         }
@@ -64,8 +62,7 @@ namespace Service
             }
             catch (Exception)
             {
-
-                throw;
+                result = null;
             }
             return result;
         }
@@ -91,7 +88,7 @@ namespace Service
             }
             catch (Exception)
             {
-                throw;
+                result = null;
             }
             return result;
         }
@@ -104,6 +101,7 @@ namespace Service
                 result.Name = entity.Name;
                 result.LastName = entity.LastName;
                 result.PhoneNumber = entity.PhoneNumber;
+                result.ProfileUpdated = true;
                 _dbContext.Entry(result).State = EntityState.Modified;
                 _dbContext.SaveChanges();
                 return true;
@@ -111,11 +109,8 @@ namespace Service
             catch (Exception)
             {
                 return false;
-                throw;
             }
         }
-
-
 
         public IndexPageViewModel Search(string parameter, int page)
         {
@@ -148,7 +143,6 @@ namespace Service
             return result;
         }
 
-
         IEnumerable<Client> IRepository<Client>.GetAll(int page)
         {
             throw new NotImplementedException();
@@ -156,17 +150,13 @@ namespace Service
 
         public string NameOfClient(int id)
         {
-            var result = "";
+            string result = "";
             try
             {
                 var FullName = _dbContext.Clients.Single(x => x.Id == id);
                 if (FullName != null)
                 {
                     result = FullName.Name + " " + FullName.LastName;
-                }
-                else
-                {
-                    result = "No hay elementos";
                 }
             }
             catch (Exception)
@@ -184,7 +174,7 @@ namespace Service
                 model = _dbContext.Clients.Include(x => x.ApplicationUser).Single(x => x.ApplicationUserId == id);
                 return model;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

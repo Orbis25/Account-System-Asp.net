@@ -31,6 +31,20 @@ namespace Service
             return user;
         }
 
+        public ApplicationUser LastUserId()
+        {
+            var user = new ApplicationUser();
+            try
+            {
+                user = _dbContext.Users.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return user;
+            }
+            return user;
+        }
+
         public bool UpdateUserName(UpdateUserNameViewModelAppUs model)
         { ApplicationUser user;
             try

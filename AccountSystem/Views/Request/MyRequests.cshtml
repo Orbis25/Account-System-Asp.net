@@ -110,8 +110,8 @@
     @if (ViewBag.status != null)
     {
      <script>
-         swal("Solicitud enviada", {
-             icon: "success",
+         swal('@ViewBag.status', {
+             icon: '@ViewBag.icon',
          });
      </script>
     }

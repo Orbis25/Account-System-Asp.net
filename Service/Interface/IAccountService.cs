@@ -11,7 +11,8 @@ namespace Service.Interface
 {
     public interface IAccountService
     {
-        ApplicationUser GetUser(string id);
+       ApplicationUser GetUser(string id);
        bool UpdateUserName(UpdateUserNameViewModelAppUs model);
+        ApplicationUser LastUserId();
     }
 }

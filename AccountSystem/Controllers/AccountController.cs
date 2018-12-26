@@ -165,23 +165,25 @@ namespace AccountSystem.Controllers
                 var user = new ApplicationUser {
                     UserName = model.Email,
                     Email = model.Email,
+                    CreatedAt = DateTime.Now
                 };
 
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    var appUser = _accountService.GetUser(User.Identity.GetUserId());
+                    var userId = _accountService.LastUserId();
                     var client = new Client
                     {
-                        ApplicationUserId = appUser.Id,
-                        LastName = "Vacio",
-                        Name = "Vacio",
-                        PhoneNumber = "Vacio"
+                        ApplicationUserId = userId.Id,
+                        LastName = "nombre 😭",
+                        Name = "No tienes",
+                        PhoneNumber = "0123456789",
+                        ProfileUpdated = false
                     };
                     _clientService.Add(client);
 
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // Para obtener más información sobre cómo habilitar la confirmación de cuentas y el restablecimiento de contraseña, visite https://go.microsoft.com/fwlink/?LinkID=320771
                     // Enviar correo electrónico con este vínculo
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);

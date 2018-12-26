@@ -15,7 +15,7 @@ namespace Model
         [Required]
         [StringLength(20, MinimumLength = 10)]
         public string PhoneNumber { get; set; }
-
+        public bool ProfileUpdated { get; set; }
         public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser ApplicationUser { get; set; }

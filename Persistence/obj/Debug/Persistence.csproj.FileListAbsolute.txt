@@ -91,3 +91,5 @@ C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-mast
 C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.RelationShipClientAndApplicationUser2.resources
 C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.RelationShipClientAndApplicationUser3.resources
 C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.Requests.resources
+C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.CreatedAtInApplicationUser.resources
+C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.ProfileUpdated.resources

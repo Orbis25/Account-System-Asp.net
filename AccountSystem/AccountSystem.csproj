@@ -508,7 +508,6 @@
     <None Include="Properties\PublishProfiles\AccountSystem - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\AccountSystem - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\Functions\functions.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
