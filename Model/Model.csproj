@@ -102,6 +102,7 @@
     <Compile Include="ViewModels\PayViewModel.cs" />
     <Compile Include="ViewModels\UpdateRequestViewModel.cs" />
     <Compile Include="ViewModels\UpdateUserNameViewModelAppUs.cs" />
+    <Compile Include="ViewModels\UploadImgViewModel.cs" />
     <Compile Include="ViewModels\UserRequestViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

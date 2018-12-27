@@ -102,6 +102,8 @@ namespace Service
                 result.LastName = entity.LastName;
                 result.PhoneNumber = entity.PhoneNumber;
                 result.ProfileUpdated = true;
+                result.Dni = entity.Dni;
+                result.Address = entity.Address;
                 _dbContext.Entry(result).State = EntityState.Modified;
                 _dbContext.SaveChanges();
                 return true;
@@ -148,24 +150,6 @@ namespace Service
             throw new NotImplementedException();
         }
 
-        public string NameOfClient(int id)
-        {
-            string result = "";
-            try
-            {
-                var FullName = _dbContext.Clients.Single(x => x.Id == id);
-                if (FullName != null)
-                {
-                    result = FullName.Name + " " + FullName.LastName;
-                }
-            }
-            catch (Exception)
-            {
-                result = "No hay elementos";
-            }
-            return result;
-        }
-
         public Client GetByIdUser(string id)
         {
             var model = new Client() ;
@@ -177,6 +161,22 @@ namespace Service
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public bool UpdateImg(UploadImgViewModel model)
+        {
+            try
+            {
+                var client = _dbContext.Clients.FirstOrDefault(x => x.Id == model.ClientId);
+                client.Avatar = model.Avatar;
+                _dbContext.Entry(client).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }

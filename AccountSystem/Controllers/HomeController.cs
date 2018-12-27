@@ -23,6 +23,12 @@ namespace AccountSystem.Controllers
         }
         public ActionResult Index()
         {
+            //using(ApplicationDbContext db = new ApplicationDbContext())
+            //{
+            //    var role = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
+            //    var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            //    userManager.AddToRole(User.Identity.GetUserId(), "Admin");
+            //};
 
             ViewBag.Menbers = _homeService.GetAllMenbers();
             ViewBag.Debs = _homeService.GetAllDebs();

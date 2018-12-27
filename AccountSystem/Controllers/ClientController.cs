@@ -4,6 +4,7 @@ using Service;
 using Service.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -16,7 +17,6 @@ namespace AccountSystem.Controllers
         private readonly IClientService _repository;
         private readonly IAccountService _accountService;
         private readonly IRequestService _requestService;
-        private static int _id;
         public ClientController(IClientService repository ,
             IAccountService accountService ,
             IRequestService requestService)
@@ -45,13 +45,6 @@ namespace AccountSystem.Controllers
         }
 
         [HttpGet]
-        public ViewResult Create()
-        {
-            return View();
-        }
-        
-
-        [HttpGet]
         public ActionResult Search(string parameter = "" , int page = 1)
         {
             var model = _repository.Search(parameter, page);
@@ -76,32 +69,18 @@ namespace AccountSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Update(Client model)
         {
-            try
-            {
                 if (ModelState.IsValid)
                 {
                     if (_repository.Update(model))
                     {
-                        UpdateUserNameViewModelAppUs user = new UpdateUserNameViewModelAppUs { Id = model.ApplicationUserId ,
-                        UserName = model.Name};
-                        _accountService.UpdateUserName(user);
-                        Alerts.Type = 5;
                         return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
                     }
                 }
                 else
                 {
-                    ViewBag.response = 6;
                     return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
                 }
-            }
-            catch (Exception)
-            {
-                ViewBag.response = 6;
-                return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
 
-                throw;
-            }
             return RedirectToAction("UserProfile", "Account", new { id = model.ApplicationUserId });
         }
 
@@ -110,6 +89,38 @@ namespace AccountSystem.Controllers
         {
             return Json(_repository.Delete(id));
         }
+
+        [HttpPost]
+        public ActionResult UploadAvatar(int id , HttpPostedFileBase file)
+        {
+            if (file != null && file.ContentLength > 0)
+                try
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    string path = Path.Combine(Server.MapPath("~/Content/avatar/"),
+                    Path.GetFileName(file.FileName));
+
+                    UploadImgViewModel model = new UploadImgViewModel
+                    {
+                        Avatar = fileName.ToString(),
+                        ClientId = id
+                    };
+                    _repository.UpdateImg(model);
+
+                    file.SaveAs(path);
+                    ViewBag.Message = "Your message for success";
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = "ERROR:" + ex.Message.ToString();
+                }
+            else
+            {
+                ViewBag.Message = "Please select file";
+            }
+            return RedirectToAction("UserProfile","Account");
+        }
+
 
     }
 }

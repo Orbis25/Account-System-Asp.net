@@ -52,7 +52,7 @@
                             </a>
                         </div>
                         <div class="login-form">
-                            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal mb-5", role = "form" }))
                             {
                                 @Html.AntiForgeryToken()
                                 <h4>Cree una cuenta nueva.</h4>
@@ -61,34 +61,34 @@
                                 <div class="form-group">
                                     @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
                                     <div class="col-md-12">
-                                        @Html.TextBoxFor(m => m.Email, new { @class = "au-input au-input--full" })
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "au-input au-input--full", @required = "required" })
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
                                     <div class="col-md-12">
-                                        @Html.PasswordFor(m => m.Password, new { @class = "au-input au-input--full" })
+                                        @Html.PasswordFor(m => m.Password, new { @class = "au-input au-input--full", @required = "required" })
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
                                     <div class="col-md-12">
-                                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "au-input au-input--full" })
+                                        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "au-input au-input--full", @required = "required" })
                                     </div>
                                 </div>
                                 <div class="login-checkbox">
                                     <label>
-                                        <input type="checkbox" name="aggree">Aceptar terminos y condiciones
+                                        <input type="checkbox" name="aggree" required>Aceptar terminos y condiciones
                                     </label>
                                 </div>
                                 <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit">register</button>
+                                <div class="register-link">
+                                    <p>
+                                        Tienes una cuenta?
+                                        @Html.ActionLink("Entrar", "Login")
+                                    </p>
+                                </div>
                             }
-                            <div class="register-link">
-                                <p>
-                                    Tienes una cuenta?
-                                    @Html.ActionLink("Entrar", "Login")
-                                </p>
-                            </div>
                         </div>
                     </div>
                 </div>

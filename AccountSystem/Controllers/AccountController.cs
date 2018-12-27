@@ -90,6 +90,7 @@ namespace AccountSystem.Controllers
             // No cuenta los errores de inicio de sesión para el bloqueo de la cuenta
             // Para permitir que los errores de contraseña desencadenen el bloqueo de la cuenta, cambie a shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            
             switch (result)
             {
                 case SignInStatus.Success:
@@ -175,10 +176,14 @@ namespace AccountSystem.Controllers
                     var client = new Client
                     {
                         ApplicationUserId = userId.Id,
-                        LastName = "nombre 😭",
-                        Name = "No tienes",
+                        LastName = "tu perfil 😭",
+                        Name = "Completa",
                         PhoneNumber = "0123456789",
-                        ProfileUpdated = false
+                        ProfileUpdated = false,
+                        Dni = "ninguno",
+                        Address = "ninguna",
+                        Avatar = "avatar-367-456319.png"
+
                     };
                     _clientService.Add(client);
 

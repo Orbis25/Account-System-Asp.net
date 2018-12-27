@@ -143,6 +143,14 @@
     <Compile Include="Migrations\201812260415553_ProfileUpdated.Designer.cs">
       <DependentUpon>201812260415553_ProfileUpdated.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812260528069_AddDniAddressInClient.cs" />
+    <Compile Include="Migrations\201812260528069_AddDniAddressInClient.Designer.cs">
+      <DependentUpon>201812260528069_AddDniAddressInClient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812261954344_AddAvatars.cs" />
+    <Compile Include="Migrations\201812261954344_AddAvatars.Designer.cs">
+      <DependentUpon>201812261954344_AddAvatars.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -198,6 +206,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812260415553_ProfileUpdated.resx">
       <DependentUpon>201812260415553_ProfileUpdated.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812260528069_AddDniAddressInClient.resx">
+      <DependentUpon>201812260528069_AddDniAddressInClient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812261954344_AddAvatars.resx">
+      <DependentUpon>201812261954344_AddAvatars.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

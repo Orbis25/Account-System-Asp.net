@@ -13,8 +13,9 @@ namespace Service.Interface
     {
         IndexPageViewModel GetAllIndex(int page);
         IndexPageViewModel Search(string parameter,int page);
-        string NameOfClient(int id);
         Client GetByIdUser(string id);
+        bool UpdateImg(UploadImgViewModel model);
+
     }
 
 }
