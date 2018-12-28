@@ -27,7 +27,7 @@
                                         <tbody>
                                             @foreach (var item in Model.Clients)
                                             {
-                                                if (item.ApplicationUser.Email == User.Identity.Name) 
+                                                if (item.ApplicationUser.Email == User.Identity.Name)
                                                 {
                                                     continue;
                                                 };
@@ -38,7 +38,9 @@
                                                 <td>
                                                     <button class="btn btn-danger fas fa-trash-alt" onclick="remove(@item.Id,'Client/Remove','desea eliminar este cliente')" ></button>
                                                     <b> | </b>
-                                                    @Html.ActionLink(" ", "Add", "AccountClient", new { id = item.Id }, new { @class = " btn btn-success fas fa-plus" })
+                                                    <a href='@Url.Action("ViewProfile", "Account", new { id = item.Id })' class="btn btn-success">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                             }

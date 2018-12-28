@@ -71,7 +71,7 @@
                             </li>
                             <li>
                                 <a href="@Url.Action("Index", "Client")">
-                                    <i class="fas fa-user"></i>Usuarios
+                                    <i class="fas fa-user"></i>Clientes
                                 </a>
                             </li>
                             <li>
@@ -132,7 +132,7 @@
                             </li>
                             <li>
                                 <a href="@Url.Action("Index", "Client")">
-                                    <i class="fas fa-user"></i>Usuarios
+                                    <i class="fas fa-user"></i>Clientes
                                 </a>
                             </li>
                             <li>
@@ -178,8 +178,8 @@
             <div class="section__content section__content--p30">
                 <div class="container-fluid">
                     <div class="header-wrap">
-                        <form class="form-header" action="" method="POST">
-                            <input class="au-input au-input--xl" type="text" name="search" placeholder="Search for datas &amp; reports..." />
+                        <form class="form-header" action="Client/Search" method="GET">
+                            <input class="au-input au-input--xl" type="text" name="parameter" placeholder="Ejemplo: Nombre o Dni" />
                             <button class="au-btn--submit" type="submit">
                                 <i class="zmdi zmdi-search"></i>
                             </button>

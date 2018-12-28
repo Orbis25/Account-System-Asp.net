@@ -66,6 +66,12 @@ namespace AccountSystem.Controllers
             return View(model);
         }
 
+        public ActionResult ViewProfile(int id)
+        {
+            var model = _clientService.Get(id);
+            return View("UserProfile", model);
+        }
+
         //
         // GET: /Account/Login
         [AllowAnonymous]

@@ -57,7 +57,7 @@ namespace Service
             var result = new Client();
             try
             {
-                result = _dbContext.Clients.Find(id);
+                result = _dbContext.Clients.Include(x => x.ApplicationUser).FirstOrDefault(x => x.Id == id);
 
             }
             catch (Exception)
@@ -123,10 +123,13 @@ namespace Service
                 int pageToQuantity = 10;
                 var clients = _dbContext.Clients
                     .Where(x => x.Name.Contains(parameter)
-                         || x.LastName.Contains(parameter) || x.PhoneNumber.Contains(parameter))
+                         || x.LastName.Contains(parameter)
+                         || x.PhoneNumber.Contains(parameter)
+                         || x.Address.Contains(parameter)
+                         || x.Dni.Contains(parameter))
                          .OrderBy(x => x.Id)
                          .Skip((page - 1) * pageToQuantity)
-                         .Take(pageToQuantity)
+                         .Take(pageToQuantity).Include(x => x.ApplicationUser)
                          .ToList();
                 var TotalOfRegisters = _dbContext.Clients
                     .Where(x => x.Name.Contains(parameter)

@@ -1,4 +1,6 @@
-﻿@model Model.Client
+﻿@using Microsoft.AspNet.Identity;
+
+@model Model.Client
 @{
     ViewBag.Title = "UserProfile";
 }
@@ -10,19 +12,22 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="overview-wrap">
-                            <h2 class="title-1 mb-5">Bienvenido @User.Identity.Name</h2>
-
-                            @if (!Model.ProfileUpdated)
+                            @if (!Model.ProfileUpdated && Model.ApplicationUserId == User.Identity.GetUserId())
                             {
+                                <h2 class="title-1 mb-5">Bienvenido @User.Identity.Name</h2>
                                 <button class="au-btn au-btn-icon au-btn--blue" data-toggle="modal" data-target="#mediumModal">
                                     <i class="fas fa-check"></i>Completar
                                 </button>
                             }
                             else
                             {
-                                <button class="au-btn au-btn-icon au-btn--blue" data-toggle="modal" data-target="#mediumModal">
-                                    <i class="fas fa-undo"></i>Actualizar
-                                </button>
+                                if (Model.ApplicationUserId == User.Identity.GetUserId())
+                                {
+                                    <h2 class="title-1 mb-5">Bienvenido @User.Identity.Name</h2>
+                                    <button class="au-btn au-btn-icon au-btn--blue" data-toggle="modal" data-target="#mediumModal">
+                                        <i class="fas fa-undo"></i>Actualizar
+                                    </button>
+                                }
                             }
                         </div>
                     </div>
@@ -48,12 +53,17 @@
                             <div class="mx-auto d-block">
                                 <img class="mx-auto d-block avatar-user"
                                      src="~/Content/avatar/@Model.Avatar"
-                                      width="100"
+                                     width="100"
                                      alt="@Model.Avatar">
                                 <p class="text-center mt-2 text-success ">
-                                    <button class="text-center btn btn-sm btn-success"
-                                            data-toggle="modal"
-                                            data-target="#mediumModal2">Cambiar imagen</button>
+                                    @if (Model.ApplicationUserId == User.Identity.GetUserId())
+                                    {
+                                        <button class="text-center btn btn-sm btn-success"
+                                                data-toggle="modal"
+                                                data-target="#mediumModal2">
+                                            Cambiar imagen
+                                        </button>
+                                    }
                                 </p>
                                 <h5 class="text-sm-center mt-2 mb-1">@Model.Name @Model.LastName</h5>
                             </div>
@@ -120,18 +130,21 @@
                             </div>
                             <div class="form-group">
                                 <label for="cc-number" class="control-label mb-1">Numero</label>
-                                <input id="cc-number" name="PhoneNumber" type="tel" class="form-control cc-number identified visa" value="@Model.PhoneNumber" required>
+                                <input name="PhoneNumber" id="phone" type="tel" class="form-control cc-number identified visa" value="@Model.PhoneNumber" required>
+                                <p class="text-danger" id="alert-phone"></p>
                             </div>
                             <div class="form-group">
                                 <label for="city" class=" form-control-label">Cedula</label>
-                                <input type="text" id="city" name="Dni" required value="@Model.Dni" class="form-control">
+                                <input type="text" id="Dni" name="Dni" required value="@Model.Dni" class="form-control">
+                                <p class="text-danger" id="alert-dni"></p>
                             </div>
                             <div class="form-group">
                                 <label for="street" class=" form-control-label">Dirreccion</label>
-                                <textarea class="form-control" required name="Address">@Model.Address</textarea>
+                                <textarea class="form-control" id="address" required name="Address">@Model.Address</textarea>
+                                <p class="text-danger" id="alert-address"></p>
                             </div>
                             <div>
-                                <button type="submit" class="btn btn-info btn-block">
+                                <button type="submit" id="btn-enviar" class="btn btn-info btn-block">
                                     Actualizar
                                 </button>
                                 <button data-dismiss="modal" class="btn btn-secondary btn-block">
@@ -165,7 +178,7 @@
                         <form action="/client/uploadAvatar" enctype="multipart/form-data" method="post">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@Model.Id" />
-                            <input type="file" name="file" class="form-control mb-3" />
+                            <input type="file" name="file" required class="form-control mb-3" />
                             <div>
                                 <button type="submit" class="btn btn-info btn-block">
                                     Subir
@@ -181,3 +194,39 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        let dni = document.getElementById('Dni').addEventListener('keyup', () => {
+
+            if (document.getElementById('Dni').value.length <= 11 && document.getElementById('Dni').value.length > 10) {
+                document.getElementById('alert-dni').innerHTML = "";
+                document.getElementById('btn-enviar').disabled = false;
+            } else {
+                document.getElementById('alert-dni').innerHTML = "Cedula invalida";
+                document.getElementById('btn-enviar').disabled = true;
+            }
+        });
+        let address = document.getElementById('address').addEventListener('keyup', () => {
+
+            if (document.getElementById('address').value.length > 95) {
+                document.getElementById('btn-enviar').disabled = true;
+                document.getElementById('alert-address').innerHTML = "Coloque una direccion menor a 95 caracteres";
+            } else {
+                document.getElementById('btn-enviar').disabled = false;
+                document.getElementById('alert-address').innerHTML = "";
+            }
+        });
+        let phoneNumber = document.getElementById('phone').addEventListener('keyup', () => {
+
+            if (document.getElementById('phone').value.length >= 10 && document.getElementById('phone').value.length < 20) {
+                document.getElementById('btn-enviar').disabled = false;
+                document.getElementById('alert-phone').innerHTML = "";
+
+            } else {
+                document.getElementById('btn-enviar').disabled = true;
+                document.getElementById('alert-phone').innerHTML = "Numero Invalido";
+            }
+        });
+    </script>
+}
