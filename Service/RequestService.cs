@@ -51,6 +51,28 @@ namespace Service
             }
         }
 
+        public bool Exist(Request model)
+        {
+            var result = new Request();
+            try
+            {
+                 result = _dbContext.Requests.FirstOrDefault(x => x.Descripcion.Replace(" ","") 
+                 == model.Descripcion.Replace(" ", ""));
+                if (result!=null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public IEnumerable<Request> GetAll(int page = 1)
         {
             var model = new List<Request>();

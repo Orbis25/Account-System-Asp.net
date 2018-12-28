@@ -18,6 +18,7 @@ namespace Service.Interface
         bool Update(Request model);
         PaginationViewModel<Request> GetAllWithPagination(int page = 1);
         PaginationViewModel<Request> Search(string parameter, int page = 1);
+        bool Exist(Request model);
 
     }
 }

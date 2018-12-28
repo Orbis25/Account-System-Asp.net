@@ -11,6 +11,7 @@ using Model.ViewModels;
 
 namespace AccountSystem.Controllers
 {
+    [Authorize]
     public class RequestController : Controller
     {
         private readonly IRequestService _requestService;
@@ -21,6 +22,7 @@ namespace AccountSystem.Controllers
             _clientServece = clientService;
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult AllRequests(int page = 1)
         {
             return View(_requestService.GetAllWithPagination(page));
@@ -43,7 +45,6 @@ namespace AccountSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult MyRequests(string id)
         {
             UserRequestViewModel model = new UserRequestViewModel
@@ -63,7 +64,6 @@ namespace AccountSystem.Controllers
 
 
         [HttpPost]
-        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(Request model)
         {
@@ -71,14 +71,22 @@ namespace AccountSystem.Controllers
             {
                 if (_clientServece.GetByIdUser(model.ApplicationUserId).ProfileUpdated)
                 {
-                    if (await _requestService.Add(model))
+                    if (!_requestService.Exist(model))
                     {
-                        TempData["request"] = "Solicitud enviada correctamente";
-                        TempData["icon"] = "success";
+                        if (await _requestService.Add(model))
+                        {
+                            TempData["request"] = "Solicitud enviada correctamente";
+                            TempData["icon"] = "success";
+                        }
+                        else
+                        {
+                            TempData["request"] = "Upss!, algo ha ocurrido no se ha enviado la solicitud";
+                            TempData["icon"] = "error";
+                        }
                     }
                     else
                     {
-                        TempData["request"] = "Upss!, algo ha ocurrido no se ha enviado la solicitud";
+                        TempData["request"] = "Existe una solicitud con ese nombre,Porfavor tome un nombre diferente";
                         TempData["icon"] = "error";
                     }
                 }

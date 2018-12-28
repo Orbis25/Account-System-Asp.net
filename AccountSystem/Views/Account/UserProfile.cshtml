@@ -198,35 +198,29 @@
 @section Scripts{
     <script>
         let dni = document.getElementById('Dni').addEventListener('keyup', () => {
-
-            if (document.getElementById('Dni').value.length <= 11 && document.getElementById('Dni').value.length > 10) {
-                document.getElementById('alert-dni').innerHTML = "";
-                document.getElementById('btn-enviar').disabled = false;
-            } else {
-                document.getElementById('alert-dni').innerHTML = "Cedula invalida";
-                document.getElementById('btn-enviar').disabled = true;
-            }
+        if (document.getElementById('Dni').value.length <= 11 && document.getElementById('Dni').value.length > 10) {
+            validate("", false, 'alert-dni');
+        } else {
+            validate("Cedula invalida", true, 'alert-dni');
+        }
         });
         let address = document.getElementById('address').addEventListener('keyup', () => {
-
             if (document.getElementById('address').value.length > 95) {
-                document.getElementById('btn-enviar').disabled = true;
-                document.getElementById('alert-address').innerHTML = "Coloque una direccion menor a 95 caracteres";
+                validate("Coloque una direccion menor a 95 caracteres", true, 'alert-address');
             } else {
-                document.getElementById('btn-enviar').disabled = false;
-                document.getElementById('alert-address').innerHTML = "";
+                validate("", false, 'alert-address');
             }
         });
         let phoneNumber = document.getElementById('phone').addEventListener('keyup', () => {
-
             if (document.getElementById('phone').value.length >= 10 && document.getElementById('phone').value.length < 20) {
-                document.getElementById('btn-enviar').disabled = false;
-                document.getElementById('alert-phone').innerHTML = "";
-
+                validate("", false, 'alert-phone');
             } else {
-                document.getElementById('btn-enviar').disabled = true;
-                document.getElementById('alert-phone').innerHTML = "Numero Invalido";
+                validate("Numero Invalido", true, 'alert-phone');
             }
         });
+        function validate(text, state, id) {
+            document.getElementById(`${id}`).innerHTML = text;
+            document.getElementById('btn-enviar').disabled = state;
+        }
     </script>
 }
