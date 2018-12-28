@@ -24,23 +24,17 @@ namespace AccountSystem.Controllers
             _repository = repository;
             _accountService = accountService;
             _requestService = requestService;
-
-
         }
         public ActionResult Index(int page = 1)
         {
-            try
+            var model = _repository.GetAllIndex(page);
+            if (model != null)
             {
-                ViewBag.response = Alerts.Type;
-                ViewBag.Action = "Index";
-                ViewBag.Controller = "Client";
-                Alerts.Type = 0;
-                var model = _repository.GetAllIndex(page);
-                return View(model);
+               return View(model);
             }
-            catch (Exception)
+            else
             {
-                return RedirectToAction("PageNotFound", "Error");
+               return RedirectToAction("PageNotFound", "Error");
             }
         }
 
@@ -59,11 +53,6 @@ namespace AccountSystem.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-
-        //V2.0
-        //---------------------------------------------------------
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -120,7 +109,5 @@ namespace AccountSystem.Controllers
             }
             return RedirectToAction("UserProfile","Account");
         }
-
-
     }
 }

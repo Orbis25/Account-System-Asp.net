@@ -1,5 +1,6 @@
 ﻿using AccountSystem.Models;
 using Model;
+using Model.ViewModels;
 using Service.Interface;
 using System;
 using System.Collections.Generic;
@@ -76,6 +77,60 @@ namespace Service
                 return null;
             }
 
+            return model;
+        }
+
+        public PaginationViewModel<Request> GetAllWithPagination(int page = 1)
+        {
+            var model = new PaginationViewModel<Request>();
+            try
+            {
+                int pageToQuantity = 10;
+                var request = _dbContext.Requests
+                    .OrderBy(x => x.Id)
+                    .Include(x => x.ApplicationUser)
+                    .Skip((page - 1) * pageToQuantity)
+                    .Take(pageToQuantity).ToList();
+                var TotalOfRegisters = _dbContext.Requests.Count();
+                model.Entities = request;
+                model.ActuallyPage = page;
+                model.TotalOfRegister = TotalOfRegisters;
+                model.RegisterByPage = pageToQuantity;
+            }
+            catch (Exception)
+            {
+                model = null;
+            }
+            return model;
+        }
+
+        public PaginationViewModel<Request> Search(string parameter, int page = 1)
+        {
+
+            var model = new PaginationViewModel<Request>();
+            try
+            {
+                int pageToQuantity = 10;
+                var request = _dbContext.Requests
+                    .Where(x => x.ApplicationUser.Email.Contains(parameter) || 
+                    x.Descripcion.Contains(parameter))
+                    .OrderBy(x => x.Id)
+                    .Include(x => x.ApplicationUser)
+                    .Skip((page - 1) * pageToQuantity)
+                    .Take(pageToQuantity).ToList();
+                var TotalOfRegisters = _dbContext.Requests
+                    .Where(x => x.ApplicationUser.Email.Contains(parameter) ||
+                    x.Descripcion.Contains(parameter)).Count();
+
+                model.Entities = request;
+                model.ActuallyPage = page;
+                model.TotalOfRegister = TotalOfRegisters;
+                model.RegisterByPage = pageToQuantity;
+            }
+            catch (Exception)
+            {
+                model = null;
+            }
             return model;
         }
 

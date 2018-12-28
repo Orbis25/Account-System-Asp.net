@@ -99,6 +99,7 @@
     <Compile Include="ViewModels\DetailPageViewModel.cs" />
     <Compile Include="ViewModels\IndexPageViewModel.cs" />
     <Compile Include="ViewModels\AccountPageViewModel.cs" />
+    <Compile Include="ViewModels\PaginationViewModel.cs" />
     <Compile Include="ViewModels\PayViewModel.cs" />
     <Compile Include="ViewModels\UpdateRequestViewModel.cs" />
     <Compile Include="ViewModels\UpdateUserNameViewModelAppUs.cs" />

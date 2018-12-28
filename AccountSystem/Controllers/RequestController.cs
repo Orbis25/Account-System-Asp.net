@@ -23,7 +23,23 @@ namespace AccountSystem.Controllers
 
         public ActionResult AllRequests(int page = 1)
         {
-            return View(_requestService.GetAll(page));
+            return View(_requestService.GetAllWithPagination(page));
+        }
+
+        [HttpGet]
+        public ActionResult Search(string parameter, int page = 1)
+        {
+            var model = _requestService.Search(parameter, page);
+            if (model != null)
+            {
+                ViewBag.pagination = "1";
+                ViewBag.parameter = parameter;
+                return View("AllRequests",model);
+            }
+            else
+            {
+                return RedirectToAction("AllRequests");
+            }
         }
 
         [HttpGet]

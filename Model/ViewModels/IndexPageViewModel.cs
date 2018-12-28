@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Model.ViewModels
 {
-    
+    //modelo para paginar
     public class IndexPageViewModel : PageModel
     {
         public List<Client> Clients { get; set; }

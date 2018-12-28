@@ -1,12 +1,15 @@
-﻿@model List<Model.Request>
+﻿@model  Model.ViewModels.PaginationViewModel<Model.Request>
 <div class="page-container">
     <div class="main-content">
         <div class="section__content section__content--p30">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="overview-wrap">
-                            <h2 class="title-1 mb-5">Solicitudes</h2>
+                <div class="row justify-content-center">
+                    <div class="row ">
+                        <div class="col">
+                            <h1>Solicitudes</h1>
+                        </div>
+                        <div class="col">
+                            @Html.Partial("_FindPartial", "request")
                         </div>
                     </div>
                 </div>
@@ -26,7 +29,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model)
+                                        @foreach (var item in Model.Entities)
                                         {
                                             <tr>
                                                 @{
@@ -69,7 +72,7 @@
                             </div>
                             <div class="row">
                                 <div class="col mb-4">
-                                    @*@{ var page = ViewBag.pagination;}
+                                    @{ var page = ViewBag.pagination;}
 
                                         @if (page == "1")
                                         {
@@ -78,7 +81,7 @@
                                         else
                                         {
                                             @Html.Partial("_PaginationPartial", Model)
-                                        }*@
+                                        }
                                 </div>
                             </div>
                         </div>

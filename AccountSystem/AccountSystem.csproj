@@ -593,6 +593,7 @@
     <Content Include="Views\Client\DisplayTemplates\Boolean.cshtml" />
     <Content Include="Views\Client\DisplayTemplates\DateTime.cshtml" />
     <Content Include="Views\Shared\_JsFunctionPartial.cshtml" />
+    <Content Include="Views\Shared\_FindPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

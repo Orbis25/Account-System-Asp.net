@@ -1,0 +1,13 @@
+﻿@model string
+
+
+@* 
+    Vista parcial para hacer las busquedas en la cual solo tengo que pasar
+    el nombre del controlador al que ira
+*@
+<form class="form-header" action="/@Model.ToString()/Search" method="get">
+    <input class="au-input au-input--xl" type="text" name="parameter" placeholder="Ejemplo: Nombre o Dni" />
+    <button class="au-btn--submit" type="submit">
+        <i class="zmdi zmdi-search"></i>
+    </button>
+</form>
