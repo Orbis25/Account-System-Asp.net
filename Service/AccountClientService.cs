@@ -33,7 +33,6 @@ namespace Service
             catch (Exception)
             {
                 return false;
-                throw;
             }
         }
 
@@ -273,6 +272,25 @@ namespace Service
             {
                 return false;
                 throw;
+            }
+        }
+
+        public bool VerifyRequestAndClient(int request, int client)
+        {
+            try
+            {
+                if (_dbContext.Accounts.FirstOrDefault(x => x.RequestId == request && x.ClientId == client) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 

@@ -578,10 +578,7 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\AccountClient\Add.cshtml" />
-    <Content Include="Views\Client\Delete.cshtml" />
     <Content Include="Views\AccountClient\Update.cshtml" />
-    <Content Include="Views\AccountClient\Delete.cshtml" />
     <Content Include="Views\AccountClient\Detail.cshtml" />
     <Content Include="Views\Deb\Delete.cshtml" />
     <Content Include="Views\Deb\Update.cshtml" />

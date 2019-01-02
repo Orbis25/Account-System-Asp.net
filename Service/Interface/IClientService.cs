@@ -15,7 +15,7 @@ namespace Service.Interface
         IndexPageViewModel Search(string parameter,int page);
         Client GetByIdUser(string id);
         bool UpdateImg(UploadImgViewModel model);
-
+        IEnumerable<Client> GetAll();
     }
 
 }

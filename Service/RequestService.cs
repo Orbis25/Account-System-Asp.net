@@ -14,17 +14,15 @@ namespace Service
     public class RequestService : IRequestService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly DateTime _dateTime;
         public RequestService(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _dateTime = DateTime.Now;
         }
         public async Task<bool> Add(Request model)
         {
             try
             {
-                model.CreatedAt = _dateTime;
+                model.CreatedAt = DateTime.Now;
                 model.State = false;
                 _dbContext.Requests.Add(model);
                 await _dbContext.SaveChangesAsync();
@@ -74,6 +72,20 @@ namespace Service
         }
 
         public IEnumerable<Request> GetAll(int page = 1)
+        {
+            var model = new List<Request>();
+            try
+            {
+                model = _dbContext.Requests.Include(x => x.ApplicationUser).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return model;
+        }
+
+        public IEnumerable<Request> GetAll()
         {
             var model = new List<Request>();
             try

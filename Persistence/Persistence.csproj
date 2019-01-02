@@ -151,6 +151,18 @@
     <Compile Include="Migrations\201812261954344_AddAvatars.Designer.cs">
       <DependentUpon>201812261954344_AddAvatars.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812290437093_Request-Account.cs" />
+    <Compile Include="Migrations\201812290437093_Request-Account.Designer.cs">
+      <DependentUpon>201812290437093_Request-Account.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812290456441_CreatedAddAccount.cs" />
+    <Compile Include="Migrations\201812290456441_CreatedAddAccount.Designer.cs">
+      <DependentUpon>201812290456441_CreatedAddAccount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812290505399_AccountState.cs" />
+    <Compile Include="Migrations\201812290505399_AccountState.Designer.cs">
+      <DependentUpon>201812290505399_AccountState.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -212,6 +224,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812261954344_AddAvatars.resx">
       <DependentUpon>201812261954344_AddAvatars.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812290437093_Request-Account.resx">
+      <DependentUpon>201812290437093_Request-Account.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812290456441_CreatedAddAccount.resx">
+      <DependentUpon>201812290456441_CreatedAddAccount.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812290505399_AccountState.resx">
+      <DependentUpon>201812290505399_AccountState.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -182,5 +182,19 @@ namespace Service
                 return false;
             }
         }
+
+        public IEnumerable<Client> GetAll()
+        {
+            var model = new List<Client>(); 
+            try
+            {
+                model = _dbContext.Clients.Include(x => x.ApplicationUser).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            return model;
+        }
     }
 }

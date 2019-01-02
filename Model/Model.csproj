@@ -97,6 +97,7 @@
     <Compile Include="ViewModels\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\DeleteDebsViewModel.cs" />
     <Compile Include="ViewModels\DetailPageViewModel.cs" />
+    <Compile Include="ViewModels\IndexAccountViewModel.cs" />
     <Compile Include="ViewModels\IndexPageViewModel.cs" />
     <Compile Include="ViewModels\AccountPageViewModel.cs" />
     <Compile Include="ViewModels\PaginationViewModel.cs" />

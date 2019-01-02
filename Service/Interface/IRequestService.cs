@@ -19,6 +19,7 @@ namespace Service.Interface
         PaginationViewModel<Request> GetAllWithPagination(int page = 1);
         PaginationViewModel<Request> Search(string parameter, int page = 1);
         bool Exist(Request model);
+        IEnumerable<Request> GetAll();
 
     }
 }

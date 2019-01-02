@@ -3,15 +3,20 @@
     ViewBag.Title = "Cuentas";
 }
 @model  Model.ViewModels.AccountPageViewModel
+@using Microsoft.AspNet.Identity;
 <div class="page-container">
     <div class="main-content">
         <div class="section__content section__content--p30">
             <div class="container-fluid">
-                <div class="row justify-content-center">
-                    <div class="row">
-                        <div class="col">
-                            <h1>Cuentas</h1>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="overview-wrap">
+                            <h2 class="title-1 mb-5">Cuentas</h2>
+                            <button class="au-btn au-btn-icon au-btn--blue" data-toggle="modal" data-target="#mediumModal">
+                                <i class="zmdi zmdi-plus"></i>Nueva
+                            </button>
                         </div>
+                        @Html.Partial("_FindPartial", "account")
                     </div>
                     <div class="col-lg-12">
                         <div class="row m-t-30">
@@ -21,7 +26,7 @@
                                     <table class="table table-borderless table-data3">
                                         <thead>
                                             <tr>
-                                                <th>Nombre</th>
+                                                <th>Alias</th>
                                                 <th>Cliente</th>
                                                 <th>Acciones</th>
                                             </tr>
@@ -47,16 +52,16 @@
                                 </div>
                                 <div class="row">
                                     <div class="col mb-4">
-                                        @{ var page = ViewBag.pagination;}
+                                        @*@{ var page = ViewBag.pagination;}
 
-                                        @if (page == "1")
-                                        {
-                                            @Html.Partial("_PaginationSearchPartial", Model)
-                                        }
-                                        else
-                                        {
-                                            @Html.Partial("_PaginationPartial", Model)
-                                        }
+                                            @if (page == "1")
+                                            {
+                                                @Html.Partial("_PaginationSearchPartial", Model)
+                                            }
+                                            else
+                                            {
+                                                @Html.Partial("_PaginationPartial", Model)
+                                            }*@
                                     </div>
                                 </div>
                                 <!-- END DATA TABLE-->
@@ -68,24 +73,83 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediumModalLabel">Nueva Cuenta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h3 class="text-center title-2">Cuenta</h3>
+                        </div>
+                        <hr>
+                        <form action="/accountclient/add" id="add-request" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="cc-payment" class="control-label mb-1"><span class="text-danger">*</span> Alias</label>
+                                <input type="text" class="form-control" name="name" required value="" />
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-12 col-md-9">
+                                    <label for="select" class=" form-control-label"><span class="text-danger">*</span>Cliente</label>
+                                    <select name="clientId" class="form-control" required>
+                                        <option></option>
+                                        @foreach (var client in ViewBag.clients)
+                                        {
+                                            if (User.Identity.GetUserId().ToString() == client.ApplicationUserId)
+                                            {
+                                                continue;
+                                            }
+                                            <option value="@client.Id">@client.Name @client.LastName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-12 col-md-9">
+                                    <label for="select" class=" form-control-label"><span class="text-danger">*</span>Solicitud</label>
+                                    <select name="requestId" class="form-control" required>
+                                        <option></option>
+                                        @foreach (var request in ViewBag.requests)
+                                        {
+                                            if (request.State == false)
+                                            {
+                                                continue;
+                                            }
+                                            <option value="@request.Id">@request.Descripcion -- @request.ApplicationUser.UserName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
 
-
-<script src="~/Scripts/sweetalert.min.js"></script>
-@if (ViewBag.response == 6)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cuenta Creada!", "success");
-    </script>
-}
-else if (ViewBag.Response == 8)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cuenta Actualizada!", "success");
-    </script>
-}
-else if (ViewBag.Response == 9)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cuenta Eliminada!", "success");
-    </script>
+                            <div>
+                                <button type="submit" id="btn-add" class="btn btn-info btn-block">
+                                    Crear
+                                </button>
+                                <button data-dismiss="modal" class="btn btn-secondary btn-block">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @Html.Partial("_JsFunctionPartial")
+  @if(ViewBag.Alert != null){
+   <script type="text/javascript">
+       swal('@ViewBag.Alert', {
+           icon : '@ViewBag.Icon'
+       })
+   </script>
+   }
 }

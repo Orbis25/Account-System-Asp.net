@@ -14,37 +14,21 @@ namespace AccountSystem.Controllers
     [Authorize]
     public class AccountClientController : Controller
     {
-        
         private readonly IAccountClientService _repository;
         private readonly IClientService _repositoryClient;
-        private readonly DateTime _dateTime;
+        private readonly IRequestService _requestService;
         public AccountClientController(IAccountClientService repository
-            , IClientService repositoryClient)
+            , IClientService repositoryClient
+            , IRequestService requestService)
         {
             _repository = repository;
             _repositoryClient = repositoryClient;
-            _dateTime = DateTime.Now;
+            _requestService = requestService;
         }
 
-        [HttpGet]
-        public ViewResult Index(int page = 1)
-        {
-            try
-            {
-                var model = _repository.GetAllByPage(page);
-                ViewBag.response = Alerts.Type;
-                ViewBag.Action = "Index";
-                ViewBag.Controller = "AccountClient";
-                Alerts.Type = 0;
-                return View(model);
-            }
-            catch (Exception)
-            {
-                return View();
-                throw;
-            }
-        }
 
+
+        [ValidateAntiForgeryToken]
         [HttpGet]
         public ActionResult Add(int id)
         {
@@ -56,35 +40,6 @@ namespace AccountSystem.Controllers
             else
             {
                 return RedirectToAction("PageNotFound", "Error");
-            }
-        }
-
-
-        [HttpPost]
-        public ActionResult Add(Account model)
-        {
-            try
-            {
-                model.Time = _dateTime;
-                if (ModelState.IsValid)
-                {
-                    _repository.Add(model);
-                    Alerts.Type = 6;
-                    return RedirectToAction("Index", "AccountClient");
-                }
-                else
-                {
-                    Alerts.Type = 7;
-                    ViewBag.response = Alerts.Type;
-                    return View();
-                }
-            }
-            catch (Exception)
-            {
-                Alerts.Type = 7;
-                ViewBag.response = Alerts.Type;
-                return View();
-                throw;
             }
         }
 
@@ -119,33 +74,6 @@ namespace AccountSystem.Controllers
                 return View(model);
             }
          
-        }
-
-        [HttpGet]
-        public ActionResult Delete(int id)
-        {
-            
-            var model = _repository.Get(id);
-            if (model!=null)
-            {
-                var vm = new AddAccountViewModel() { Id = id };
-                ViewBag.PersonName = model.Name;
-                return View(vm);
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
-        }
-
-        [HttpGet]
-        public ActionResult SuccessDelete(int id)
-        {
-            if (_repository.Delete(id))
-            {
-                Alerts.Type = 9;
-            }
-                return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -255,6 +183,75 @@ namespace AccountSystem.Controllers
                     Alerts.Type = 17;
                     return RedirectToAction("Detail", new { id });
                 }
+            }
+            else
+            {
+                return RedirectToAction("PageNotFound", "Error");
+            }
+        }
+
+        //v2.0-------------------------------------------------
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Add(Account model)
+        {
+           model.CreatedAt = DateTime.Now;
+           if (ModelState.IsValid)
+           {
+                if (!_repository.VerifyRequestAndClient(model.RequestId,model.ClientId))
+                {
+                    if (_repository.Add(model))
+                    {
+                        TempData["response"] = "Cuenta creada con exito";
+                        TempData["icon"] = "success";
+                    }
+                    else
+                    {
+                        TempData["response"] = "Lo sentimos, no se ha creado la cuenta";
+                        TempData["icon"] = "error";
+                    }
+                }
+                else
+                {
+                    TempData["response"] = "Este cliente tiene una cuenta con esta solicitud, porfavor solicite una nueva cuenta";
+                    TempData["icon"] = "error";
+                }
+            }
+            else
+            {
+                TempData["response"] = "Lo sentimos, no se ha creado la cuenta";
+                TempData["icon"] = "error";
+            }
+            return RedirectToAction("Index", "AccountClient");
+        }
+
+        [HttpGet]
+        public ViewResult Index(int page = 1)
+        {
+            var model = _repository.GetAllByPage(page);
+            if (model!=null)
+            {
+                ViewBag.Clients = _repositoryClient.GetAll();
+                ViewBag.Requests = _requestService.GetAll();
+                if (TempData["response"] != null)
+                {
+                    ViewBag.Alert = TempData["response"].ToString();
+                    ViewBag.Icon = TempData["Icon"].ToString();
+                }
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Delete(int id)
+        {
+
+            var model = _repository.Get(id);
+            if (model != null)
+            {
+                var vm = new AddAccountViewModel() { Id = id };
+                ViewBag.PersonName = model.Name;
+                return View(vm);
             }
             else
             {

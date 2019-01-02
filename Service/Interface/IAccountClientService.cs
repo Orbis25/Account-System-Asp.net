@@ -18,6 +18,7 @@ namespace Service.Interface
         bool Pay(PayViewModel model);
         bool PayOff(int id);
         bool Report(int id , string pathReport , string PathPdf);
+        bool VerifyRequestAndClient(int request, int client);
          
     }
 }
