@@ -16,7 +16,7 @@
                                 <i class="zmdi zmdi-plus"></i>Nueva
                             </button>
                         </div>
-                        @Html.Partial("_FindPartial", "account")
+                        @Html.Partial("_FindPartial", "accountclient")
                     </div>
                     <div class="col-lg-12">
                         <div class="row m-t-30">
@@ -28,6 +28,7 @@
                                             <tr>
                                                 <th>Alias</th>
                                                 <th>Cliente</th>
+                                                <th>Fecha de creacion</th>
                                                 <th>Acciones</th>
                                             </tr>
                                         </thead>
@@ -37,12 +38,19 @@
                                                 <tr>
                                                     <td scope="row">@item.Name </td>
                                                     <td>@item.Client.Name @item.Client.LastName</td>
+                                                    <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
                                                     <td>
-                                                        @Html.ActionLink(" ", "Delete", new { id = item.Id }, new { @class = "btn btn-danger fas fa-trash-alt" })
+                                                        <button class="btn btn-danger" onclick="remove(@item.Id,'accountclient/delete', 'eliminara la cuenta?')">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
                                                         <b> | </b>
-                                                        @Html.ActionLink(" ", "Update", null, new { id = item.Id }, new { @class = "btn btn-info far fa-edit" })
+                                                        <button class="btn btn-info" onclick="edit(@item.Id)" data-toggle="modal" data-target="#mediumModal2">
+                                                            <i class="far fa-edit"></i>
+                                                        </button>
                                                         <b> | </b>
-                                                        @Html.ActionLink(" ", "Detail", "AccountClient", new { id = item.Id }, new { @class = " btn btn-success fas fa-plus" })
+                                                        <a class="btn btn-success" href="@Url.Action("Detail","AccountClient",new { id = item.Id })">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             }
@@ -52,7 +60,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col mb-4">
-                                        @*@{ var page = ViewBag.pagination;}
+                                        @{ var page = ViewBag.pagination;}
 
                                             @if (page == "1")
                                             {
@@ -61,10 +69,9 @@
                                             else
                                             {
                                                 @Html.Partial("_PaginationPartial", Model)
-                                            }*@
+                                            }
                                     </div>
                                 </div>
-                                <!-- END DATA TABLE-->
                             </div>
                         </div>
                     </div>
@@ -143,13 +150,85 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="mediumModal2" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediumModalLabel">Editar Cuenta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h3 class="text-center title-2">Cuenta</h3>
+                        </div>
+                        <hr>
+                        <form action="/accountclient/update" id="add-request" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="Id" id="id-account" value="" />
+                            <div class="form-group">
+                                <label for="cc-payment" class="control-label mb-1"><span class="text-danger">*</span> Alias</label>
+                                <input type="text" class="form-control" id="name" name="name" required value="" />
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-12 col-md-9">
+                                    <label for="select" class=" form-control-label">Cliente</label>
+                                    <input type="text" class="form-control" id="client1" name="none" required disabled value="" />
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-12 col-md-9">
+                                    <label for="select" class=" form-control-label">Solicitud</label>
+                                    <input type="text" class="form-control" id="request" name="no" required disabled value="" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="submit" id="btn-add" class="btn btn-info btn-block">
+                                    Actualizar
+                                </button>
+                                <button data-dismiss="modal" class="btn btn-secondary btn-block">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts{
     @Html.Partial("_JsFunctionPartial")
-  @if(ViewBag.Alert != null){
-   <script type="text/javascript">
+    @if (ViewBag.Alert != null)
+    {
+        <script type="text/javascript">
        swal('@ViewBag.Alert', {
            icon : '@ViewBag.Icon'
        })
-   </script>
-   }
+        </script>
+     }
+    <script>
+        function edit(id) {
+            fetch(`/accountclient/getById/${id}`,
+                {method: 'GET'})
+                .then(r => {
+                    r.json().then(response => {
+                        document.getElementById('id-account').value = `${response.Id}`
+                        document.getElementById('client1').value = `${response.Client.Name} ${response.Client.LastName}`;
+                        document.getElementById('request').value = `${response.Request.Descripcion}`
+                        document.getElementById('name').value = `${response.Name}`
+                    })
+                    .catch(error => {
+                        console.log("error :" + error);
+                    })
+                })
+                .catch(e => {
+                    console.log("error :" + e);
+                })
+        }
+    </script>
 }

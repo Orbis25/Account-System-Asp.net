@@ -82,6 +82,34 @@ namespace Service
             throw new NotImplementedException();
         }
 
+        public DetailPageViewModel Filter(FilterDebsViewModel model, int page)
+       {
+            DetailPageViewModel result = new DetailPageViewModel();
+            try
+            {
+                DateTime from = DateTime.Parse(model.From);
+                DateTime to = Convert.ToDateTime(model.To);
+                int pageToQuantity = 10;
+                result.Account = _dbContext.Accounts
+                          .Include(x => x.Client)
+                          .Single(x => x.Id == model.IdAccount);
+                result.Account.Debs = _dbContext.Debs
+                  .Where(x => x.AccountId == model.IdAccount && (x.DateTime >= from) && (x.DateTime <= to))
+                  .OrderByDescending(x => x.DateTime)
+                  .Skip((page - 1) * pageToQuantity)
+                  .Take(pageToQuantity).ToList();
+               
+                result.TotalOfRegister = _dbContext.Debs.Count();
+                result.ActuallyPage = page;
+                result.RegisterByPage = pageToQuantity;
+            }
+            catch (Exception e)
+            {
+                result = null;
+            }
+            return result;
+        }
+
         public bool Update(Debs entity)
         {
             try

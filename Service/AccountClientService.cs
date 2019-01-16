@@ -79,7 +79,7 @@ namespace Service
             var result = new Account();
             try
             {
-                result = _dbContext.Accounts.Single(x => x.Id == id);
+                result = _dbContext.Accounts.Include(x => x.Client).Include(x => x.Request).Single(x => x.Id == id);
             }
             catch (Exception)
             {

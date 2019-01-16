@@ -1,0 +1,44 @@
+﻿@model Model.OthersModels.PageModel
+
+@{
+    Layout = null;
+    var PageQuantity = (int)Math.Ceiling((double)Model.TotalOfRegister / Model.RegisterByPage);
+
+    int initial = 1;
+    var distance = 2;
+    var maximunQuantityPage = distance * 2 + 1;
+    int Final = (PageQuantity > maximunQuantityPage) ? maximunQuantityPage : PageQuantity;
+    if (Model.ActuallyPage > (distance + 1))
+    {
+        initial = Model.ActuallyPage + distance;
+    }
+    else
+    {
+        Final = PageQuantity;
+    }
+
+}
+
+<nav aria-label="Page navigation example">
+
+    <ul class="pagination justify-content-center">
+        @{string bosstrapClass = Model.ActuallyPage == 1 ? "disabled" : " ";}
+        <li class="page-item @bosstrapClass">
+            @Html.ActionLink("Primera", $"Detail/{ViewBag.other}", new { from = ViewBag.paramOne , to = ViewBag.paramTwo , idAccount = ViewBag.other }, new { @class = "page-link" })
+        </li>
+        @for (int i = initial; i <= Final; i++)
+        {
+            if (i == Model.ActuallyPage)
+            {
+                <li class="active page-item">@Html.ActionLink(i.ToString(), "Filter", new { from = ViewBag.paramOne, idAccount = ViewBag.other , to = ViewBag.paramTwo, page = i }, new { @class = "page-link" })</li>
+            }
+            else
+            {
+                <li class="page-item">@Html.ActionLink(i.ToString(), "Filter", new { from = ViewBag.paramOne, idAccount = ViewBag.other, to = ViewBag.paramTwo, page = i }, new { @class = "page-link" })</li>
+            }
+        }
+        <li class="page-item">
+            @Html.ActionLink("Ultima", "Filter", new { from = ViewBag.paramOne, idAccount = ViewBag.other, to = ViewBag.paramTwo, page = PageQuantity }, new { @class = "page-link" })
+        </li>
+    </ul>
+</nav>

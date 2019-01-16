@@ -1,74 +1,141 @@
-﻿@{
-    ViewBag.Title = "Detalle de Cuenta";
-}
+﻿
 @model Model.ViewModels.DetailPageViewModel
+<link href="~/Content/css/bootstrap-datepicker.css" rel="stylesheet" />
 
-<h1 class=" mt-5">Detalle de Cuenta</h1>
+<div class="page-container">
+    <div class="main-content">
+        <div class="section__content section__content--p30">
+            <div class="container-flui mb-5">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="overview-wrap">
+                            <h4>Detalle de Cuenta</h4>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="col-md-4 mb-5">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title mb-3">Perfil</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="mx-auto d-block">
+                                    <img class="rounded-circle mx-auto d-block" src="~/Content/avatar/@Model.Account.Client.Avatar.ToString()" width="100" alt="Card image cap">
+                                    <h5 class="text-sm-center mt-2 mb-1">@Model.Account.Client.Name @Model.Account.Client.LastName</h5>
+                                    <div class="location text-sm-center">
+                                        <i class="fa fa-map-marker"></i> @Model.Account.Client.PhoneNumber
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title mb-3">Detalles</strong>
+                            </div>
+                            <div class="card-body">
+                                <strong class="card-title">Alias:  @Model.Account.Name</strong><br />
+                                <strong class="card-subtitle mb-4 mt-3 "><i class="far fa-user"></i> Cliente: @Model.Account.Client.Name @Model.Account.Client.LastName</strong> <br />
+                                <strong class="card-subtitle mb-4 mt-3 "><i class="far fa-money-bill-alt"></i> Total:  $@Model.Account.Total </strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title mb-3">Acciones</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="mx-auto d-block">
+                                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal">
+                                        Agregar Credito
+                                    </button>
+                                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal2">
+                                        Abonar
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModal3">
+                                        Saldar
+                                    </button>
+                                    @Html.ActionLink("Generar Constancia", "GeneratePdf", "AccountClient", new { id = Model.Account.Id }, new { @class = "btn btn-danger btn-block mt-2 " })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-start" >
+                    <div class="col-6">
+                        <h1 class="mb-2">filtrado</h1>
+                        <form action="/AccountClient/filter" method="get">
+                            <input type="hidden" name="IdAccount" value="@Model.Account.Id" />
+                            <div class="input-group input-daterange">
+                                <input type="text" name="from" class="form-control" value="">
+                                <div class="input-group-addon ml-1 mr-1">Desde/Hasta</div>
+                                <input type="text" name="to" class="form-control" value="">
+                                <button class="btn btn-primary ml-2">Buscar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row m-t-30">
+                    <div class="col-md-12">
+                        <!-- DATA TABLE-->
+                        <div class="table-responsive m-b-40">
+                            <table class="table table-borderless table-data3">
+                                <thead>
+                                    <tr>
+                                        <th>Monto</th>
+                                        <th>Fecha</th>
+                                        <th>Descripcion</th>
+                                        @if (User.IsInRole("Admin"))
+                                        {<th>Accion</th>}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var deb in Model.Account.Debs)
+                                    {
+                                        <tr>
+                                            <td>@deb.Money</td>
+                                            <td>@deb.DateTime.ToString("dd/MM/yyyy")</td>
+                                            @{
+                                                deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
+                                            }
+                                            <td>@deb.Description</td>
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <td>
+                                                    <button class="btn btn-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"><i class="fas fa-trash-alt"></i></button>
+                                                    <b> | </b>
+                                                    @Html.ActionLink(" ", "Update", "Deb", new { id = deb.Id }, new { @class = "btn btn-info far fa-edit" })
+                                                    </td>
+                                                 }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col mb-4">
+                                @{ var page = ViewBag.pagination;}
 
-<div class="container mt-5">
-    <div class="row ">
-        <div class="col- mt-2">
-            <div class="card " style="width: 15rem;">
-                <div class="card-body">
-                    <h5 class="card-title">@Model.Account.Name</h5>
-                    <h6 class="card-subtitle mb-2 text-muted"><i class="far fa-user"></i> Cliente : @Model.Account.Client.Name @Model.Account.Client.LastName</h6>
-                    <h6 class="card-subtitle mb-2 text-muted"><i class="far fa-money-bill-alt"></i> Total :  $@Model.Account.Total </h6>
-
+                                @if (page == "1")
+                                {
+                                    @Html.Partial("_FilterPartial", Model)
+                                }
+                                else
+                                {
+                                    @Html.Partial("_PaginationPartial", Model)
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            @Html.ActionLink("Volver", "Index", "AccountClient", null, new { @class = "btn btn-info mt-2 " })
-        </div>
-        <div class="col- mt-2 ml-3">
-            <div class="card " style="width: 13rem;">
-                <div class="card-body">
-
-                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal">
-                        Agregar Credito
-                    </button>
-                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal2">
-                        Abonar
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="col- mt-2 ml-3">
-            <div class="card " style="width: 13rem;">
-                <div class="card-body">
-                    <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModal3">
-                        Saldar
-                    </button>
-                    @Html.ActionLink("Generar Constancia", "GeneratePdf", "AccountClient", new { id = Model.Account.Id }, new { @class = "btn btn-danger mt-2 " })
-                </div>
-            </div>
+            <div class="col-12"></div>
         </div>
     </div>
 </div>
-<hr />
-<table class="table" id="example">
-    <thead class="bg-primary">
-        <tr>
-            <th scope="col" class="text-white">Credito Tomado</th>
-            <th scope="col" class="text-white">Fecha</th>
-            <th scope="col" class="text-white">Descripcion</th>
-            <th scope="col" class="text-white">Accion</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Account.Debs)
-        {
-            <tr>
-                <th scope="row">@item.Money</th>
-                <th scope="row">@item.DateTime.ToShortDateString()</th>
-                <th scope="row">@item.Description</th>
-                <th scope="row">
-                    @Html.ActionLink(" ", "Delete", "Deb", new { id = item.Id }, new { @class = "btn btn-danger fas fa-trash-alt" })
-                    <b> | </b>
-                    @Html.ActionLink(" ", "Update", "Deb", new { id = item.Id }, new { @class = "btn btn-info far fa-edit" })
-                </th>
-            </tr>
-        }
-    </tbody>
-</table>
 <!--Modal Add-->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -105,7 +172,6 @@
         </div>
     </div>
 </div>
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -133,7 +199,6 @@
         </div>
     </div>
 </div>
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -156,67 +221,22 @@
     </div>
 </div>
 
-<script src="~/Scripts/jquery-3.3.1.min.js"></script>
-<script src="~/Scripts/Forms/Main.js"></script>
-<script src="~/Scripts/sweetalert.min.js"></script>
+@section Scripts{
+    @Html.Partial("_JsFunctionPartial")
+    @if (ViewBag.response != null)
+    {
+        <script>
+            swal('@ViewBag.response', {
+                icon: "@ViewBag.icon"
+            })
+        </script>
+    }
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script>
+        $('.input-daterange').datepicker({
+            format: "dd/mm/yyyy"
+        })
+    </script>
+}
 
-@{ var page = ViewBag.pagination;}
-
-@if (page == "1")
-{
-    @Html.Partial("_PaginationSearchPartial", Model)
-}
-else
-{
-    @Html.Partial("_PaginationPartial", Model)
-}
-
-@if (ViewBag.response == 10)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Monto Agregado!", "success");
-    </script>
-}
-else if (ViewBag.Response == 11)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Monto Actualizado!", "success");
-    </script>
-}
-else if (ViewBag.Response == 12)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Monto Eliminado!", "success");
-    </script>
-}
-else if (ViewBag.Response == 13)
-{
-    <script>
-        swal("ha ocurrido un error!", "Revise que el campo monto no este vacio, No sea negativo, Contenga letras o puntos (99.9) o ha sobrepasado el limite de caracteres!", "error");
-    </script>
-}
-else if (ViewBag.Response == 14)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Se le ha abonado dinero a su cuenta", "success");
-    </script>
-}
-else if (ViewBag.Response == 15)
-{
-    <script>
-        swal("ha ocurrido un error!", "El monto que desea abonar es mayor que el total", "error");
-    </script>
-}
-else if (ViewBag.Response == 16)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cuenta Saldada Con exito", "success");
-    </script>
-}
-else if (ViewBag.Response == 17)
-{
-    <script>
-        swal("Lo sentimos!", "Este cliente no tienes deudas", "warning");
-    </script>
-}
 

@@ -24,7 +24,10 @@
                                         if (ok) {
                                             window.location.reload();
                                         }
-                                    })
+                                        })
+                                        .catch(e => {
+                                            window.location.reload();
+                                        })
                                 } else {
                                     swal("ha ocurrido un error");
                                 }

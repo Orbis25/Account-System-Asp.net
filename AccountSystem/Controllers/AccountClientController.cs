@@ -17,99 +17,19 @@ namespace AccountSystem.Controllers
         private readonly IAccountClientService _repository;
         private readonly IClientService _repositoryClient;
         private readonly IRequestService _requestService;
+        private readonly IDebService _debService;
         public AccountClientController(IAccountClientService repository
             , IClientService repositoryClient
-            , IRequestService requestService)
+            , IRequestService requestService,
+            IDebService debService)
         {
             _repository = repository;
             _repositoryClient = repositoryClient;
             _requestService = requestService;
+            _debService = debService;
         }
 
-
-
-        [ValidateAntiForgeryToken]
-        [HttpGet]
-        public ActionResult Add(int id)
-        {
-            var model = new AddAccountViewModel() { Id = id };
-            if (_repositoryClient.Get(id) != null)
-            {
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
-        }
-
-        [HttpGet]
-        public ActionResult Update(int id)
-        {
-            var model = _repository.Get(id);
-            if (model != null)
-            {
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult Update(Account model)
-        {
-
-            var result = _repository.Update(model);
-            if (result)
-            {
-                Alerts.Type = 8;
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                Alerts.Type = 7;
-                ViewBag.response = Alerts.Type;
-                return View(model);
-            }
-         
-        }
-
-        [HttpGet]
-        public ActionResult Search(string parameter = "" , int page = 1)
-        {
-            var model = _repository.Search(parameter, page);
-            if (model != null)
-            {
-                ViewBag.pagination = "1";
-                ViewBag.parameter = parameter;
-                return View("Index", model);
-            }
-            else
-            {
-                return RedirectToAction("Index");
-            }
-            
-        }
-
-        [HttpGet]
-        public ActionResult Detail(int id , int page = 1)
-        {
-            page = page == 0 ? 1 : page;
-            var model = _repository.GetWithClientAndDebs(id , page);
-            if (model != null)
-            {
-                ViewBag.response = Alerts.Type;
-                Alerts.Type = 0;
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
-        }
-
+     
         [HttpPost]
         public ActionResult Pay (PayViewModel model)
         {
@@ -229,7 +149,7 @@ namespace AccountSystem.Controllers
         public ViewResult Index(int page = 1)
         {
             var model = _repository.GetAllByPage(page);
-            if (model!=null)
+            if (model != null)
             {
                 ViewBag.Clients = _repositoryClient.GetAll();
                 ViewBag.Requests = _requestService.GetAll();
@@ -242,21 +162,80 @@ namespace AccountSystem.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        public ActionResult Delete(int id)
+        [HttpPost]
+        public JsonResult Delete(int id)
         {
+            return Json(_repository.Delete(id));
+        }
+        
+        [HttpGet]
+        public JsonResult GetById(int id)
+        {
+            //colocamos allowGet para permitir revelar informacion
+            return Json(_repository.Get(id), JsonRequestBehavior.AllowGet);
+        }
 
-            var model = _repository.Get(id);
-            if (model != null)
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Update(Account model)
+        {
+            var result = _repository.Update(model);
+            if (result)
             {
-                var vm = new AddAccountViewModel() { Id = id };
-                ViewBag.PersonName = model.Name;
-                return View(vm);
+                TempData["response"] = "Cuenta actualizada";
+                TempData["Icon"] = "success";
             }
             else
             {
-                return RedirectToAction("PageNotFound", "Error");
+                TempData["response"] = "Lo sentimos, no se ha actualizado la cuenta";
+                TempData["Icon"] = "error";
             }
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult Search(string parameter = "", int page = 1)
+        {
+            ViewBag.pagination = "1";
+            ViewBag.parameter = parameter;
+            ViewBag.Clients = _repositoryClient.GetAll();
+            ViewBag.Requests = _requestService.GetAll();
+            return View("Index", _repository.Search(parameter, page));            
+        }
+
+        [HttpGet]
+        public ActionResult Detail(int id, int page = 1)
+        {
+            page = page == 0 ? 1 : page;
+            var model = _repository.GetWithClientAndDebs(id, page);
+            if (model != null)
+            {
+                if (TempData["response"] != null)
+                {
+                    ViewBag.response = TempData["response"].ToString();
+                    ViewBag.icon = TempData["icon"].ToString();
+                }
+                else
+                {
+                    ViewBag.response = null;
+                }
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Filter(FilterDebsViewModel vm, int page = 1)
+        {
+            var model = _debService.Filter(vm, page);
+            if (model != null)
+            {
+                ViewBag.pagination = "1";
+                ViewBag.paramOne = vm.From;
+                ViewBag.paramTwo = vm.To;
+                ViewBag.other = vm.IdAccount;
+                return View("Detail", model);
+            }
+            return View("Detail", model);
         }
     }
 }

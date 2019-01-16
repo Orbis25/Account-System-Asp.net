@@ -13,60 +13,9 @@ namespace AccountSystem.Controllers
     public class DebController : Controller
     {
         private readonly IDebService _repository;
-        private readonly DateTime _dateTime;
         public DebController(IDebService repository)
         {
             _repository = repository;
-            _dateTime = DateTime.Now;
-        }
-
-        [HttpPost]
-        public ActionResult Add(Debs model)
-        {
-            model.DateTime = _dateTime;
-            if (ModelState.IsValid)
-            {
-                _repository.Add(model);
-                 Alerts.Type = 10;
-            }
-            else
-            {
-                Alerts.Type = 13;
-            }
-            return RedirectToAction("Detail","AccountClient", new { id = model.AccountId});
-        }
-
-        [HttpGet]
-        public ActionResult Delete(int id)
-        {
-            var model = _repository.Get(id);
-            if (model != null)
-            {
-                var delete = new DeleteDebsViewModel
-                {
-                    IdAccount = model.AccountId,
-                    IdDeb = id
-                };
-                return View(delete);
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
-        }
-
-        [HttpGet]
-        public ActionResult SuccessDelete(int idAccount , int id )
-        {
-            if (_repository.Delete(id))
-            {
-                Alerts.Type = 12;
-                return RedirectToAction("Detail","AccountClient",new { id = idAccount });
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
         }
 
         [HttpGet]
@@ -109,6 +58,33 @@ namespace AccountSystem.Controllers
                 return View(debs);
 
             }
+        }
+
+        //-----------v.2.0
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Add(Debs model)
+        {
+            model.DateTime = DateTime.Now;
+            if (ModelState.IsValid)
+            {
+                _repository.Add(model);
+                TempData["response"] = "Agregado correctamente";
+                TempData["icon"] = "success";
+            }
+            else
+            {
+                TempData["response"] = "Lo sentimos!, ha ocurrido un error";
+                TempData["icon"] = "error";
+            }
+            return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public JsonResult Delete(int id)
+        {
+            return Json(_repository.Delete(id));
         }
     }
 }
