@@ -98,7 +98,9 @@
     <Compile Include="Interface\IClientService.cs" />
     <Compile Include="Interface\IDebService.cs" />
     <Compile Include="Interface\IHomeService.cs" />
+    <Compile Include="Interface\IPaymentService.cs" />
     <Compile Include="Interface\IRequestService.cs" />
+    <Compile Include="PaymentService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestService.cs" />
   </ItemGroup>

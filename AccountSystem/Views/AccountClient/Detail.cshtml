@@ -66,7 +66,7 @@
                 </div>
                 <div class="row justify-content-start" >
                     <div class="col-6">
-                        <h1 class="mb-2">filtrado</h1>
+                        <h3 class="mb-2">Deudas</h3>
                         <form action="/AccountClient/filter" method="get">
                             <input type="hidden" name="IdAccount" value="@Model.Account.Id" />
                             <div class="input-group input-daterange">
@@ -79,7 +79,7 @@
                     </div>
                 </div>
                 <div class="row m-t-30">
-                    <div class="col-md-12">
+                    <div class="col-md-7">
                         <!-- DATA TABLE-->
                         <div class="table-responsive m-b-40">
                             <table class="table table-borderless table-data3">
@@ -89,7 +89,8 @@
                                         <th>Fecha</th>
                                         <th>Descripcion</th>
                                         @if (User.IsInRole("Admin"))
-                                        {<th>Accion</th>}
+                                        {
+                                            <th>Accion</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -102,14 +103,15 @@
                                                 deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
                                             }
                                             <td>@deb.Description</td>
-                                                @if (User.IsInRole("Admin"))
-                                                {
-                                                    <td>
-                                                    <button class="btn btn-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"><i class="fas fa-trash-alt"></i></button>
-                                                    <b> | </b>
-                                                    @Html.ActionLink(" ", "Update", "Deb", new { id = deb.Id }, new { @class = "btn btn-info far fa-edit" })
-                                                    </td>
-                                                 }
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                            <td>
+                                                <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
+                                                <b> | </b>
+                                                <button class="far fa-edit text-info" onclick="GetById(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
+
+                                            </td>
+                                            }
                                         </tr>
                                     }
                                 </tbody>
@@ -128,6 +130,40 @@
                                     @Html.Partial("_PaginationPartial", Model)
                                 }
                             </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <!-- DATA TABLE-->
+                        <div class="table-responsive m-b-40">
+                            <h3 class="mb-2">Pagos</h3>
+                            <table class="table table-borderless table-data3">
+                                <thead>
+                                    <tr>
+                                        <th>Monto</th>
+                                        <th>Fecha</th>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <th>Accion</th>}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var payment in Model.Account.Payments)
+                                    {
+                                        <tr>
+                                            <td>@payment.Quantity</td>
+                                            <td>@payment.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <td>
+                                                    <button class="fas fa-trash-alt text-danger" onclick="remove(@payment.Id,'/Payment/Delete','desea eliminarla')"></button>
+                                                    <b> | </b>
+                                                    <button class="far fa-edit text-info" onclick="GetByIdPayment(@payment.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -149,8 +185,8 @@
             <div class="modal-body">
                 <div class="row justify-content-center">
                     <div class="col-">
-                        @Html.AntiForgeryToken()
                         <form action="/Deb/Add" id="Debs" class="form-group" method="post">
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="AccountId" value="@Model.Account.Id" />
                             <div>
                                 <label for="Money">Cantidad</label>
@@ -172,7 +208,7 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
+<!-- Modal Pay -->
 <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -183,10 +219,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/AccountClient/Pay" id="pay" class="form-group" method="post">
+                <form action="/Payment/Add" id="pay" class="form-group" method="post">
+                    @Html.AntiForgeryToken()
                     <div>
                         <label>Monto</label>
-                        <input type="text" class="form-control" name="Amount" value="" placeholder="Ejemplo (99,99)" />
+                        <input type="text" class="form-control" name="Quantity" value="" placeholder="Ejemplo 99,99" />
                         <input type="hidden" name="AccountId" value="@Model.Account.Id" />
                     </div>
                     <div class="mt-2">
@@ -199,7 +236,7 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
+<!-- Modal clear all -->
 <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -220,6 +257,42 @@
         </div>
     </div>
 </div>
+<!-- Modal Update-->
+<div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Credito</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="col-">
+                        <form action="/Deb/Update" id="Debs" class="form-group" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                            <input type="hidden" name="id" id="idDeb" />
+                            <div>
+                                <label for="Money">Cantidad</label>
+                                <input type="text" id="Money" lang="es" class="form-control" name="Money" required placeholder="Ejemplo (99,99)" />
+                            </div>
+                            <div>
+                                <label for="Description">Descripcion</label>
+                                <textArea name="Description" id="Description" class="form-control"></textArea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" id="send">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts{
     @Html.Partial("_JsFunctionPartial")
@@ -236,6 +309,29 @@
         $('.input-daterange').datepicker({
             format: "dd/mm/yyyy"
         })
+
+        function GetById(id) {
+            fetch(`/Deb/GetById/${id}`)
+                .then(r => {
+                    r.json().then(response => {
+                        document.getElementById("Money").value = response.Deb.Money;
+                        response.Deb.Descripcion = response.Deb.Descripcion == undefined ? 'Ninguna' : response.Deb.Descripcion;
+                        document.getElementById("Description").innerHTML = response.Deb.Descripcion;
+                        document.getElementById("idDeb").value = response.Deb.Id;
+                    }).catch(e => {
+                        console.log("error");
+                        window.location.reload()
+                    })
+                })
+                .catch(e => {
+                    console.log("error");
+                });
+        }
+
+        function GetByIdPayment(id) {
+
+        }
+
     </script>
 }
 

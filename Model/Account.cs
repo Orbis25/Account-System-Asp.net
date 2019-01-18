@@ -24,6 +24,7 @@ namespace Model
         public int RequestId { get; set; }
         public Request Request { get; set; }
         public List<Debs> Debs { get; set; }
+        public IEnumerable<Payment> Payments { get; set; }
         [Required]
         public DateTime CreatedAt { get; set; }
         [Required]

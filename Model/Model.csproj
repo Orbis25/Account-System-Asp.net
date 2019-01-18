@@ -87,11 +87,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account.cs" />
-    <Compile Include="Alerts.cs" />
     <Compile Include="ApplicationUser.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Debs.cs" />
     <Compile Include="OthersModels\PageModel.cs" />
+    <Compile Include="Payment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="ViewModels\AddAccountViewModel.cs" />

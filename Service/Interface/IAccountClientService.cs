@@ -15,7 +15,6 @@ namespace Service.Interface
         bool FindById(int id);
         AccountPageViewModel Search(string parameter, int page);
         DetailPageViewModel GetWithClientAndDebs(int id , int page = 1);
-        bool Pay(PayViewModel model);
         bool PayOff(int id);
         bool Report(int id , string pathReport , string PathPdf);
         bool VerifyRequestAndClient(int request, int client);

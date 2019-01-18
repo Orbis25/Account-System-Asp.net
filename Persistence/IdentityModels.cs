@@ -19,6 +19,7 @@ namespace AccountSystem.Models
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Debs> Debs { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<Payment> Payments { get; set; } 
 
         public static ApplicationDbContext Create()
         {

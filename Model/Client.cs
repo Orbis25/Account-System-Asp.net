@@ -23,7 +23,6 @@ namespace Model
         [StringLength(100)]
         public string Address { get; set; }
         public string Avatar { get; set; }
-
         public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser ApplicationUser { get; set; }

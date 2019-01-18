@@ -163,6 +163,10 @@
     <Compile Include="Migrations\201812290505399_AccountState.Designer.cs">
       <DependentUpon>201812290505399_AccountState.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901170324210_AddPaymentTable.cs" />
+    <Compile Include="Migrations\201901170324210_AddPaymentTable.Designer.cs">
+      <DependentUpon>201901170324210_AddPaymentTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -233,6 +237,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812290505399_AccountState.resx">
       <DependentUpon>201812290505399_AccountState.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901170324210_AddPaymentTable.resx">
+      <DependentUpon>201901170324210_AddPaymentTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

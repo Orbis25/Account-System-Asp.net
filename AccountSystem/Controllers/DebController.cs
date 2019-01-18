@@ -18,49 +18,6 @@ namespace AccountSystem.Controllers
             _repository = repository;
         }
 
-        [HttpGet]
-        public ActionResult Update(int id)
-        {
-            var model = _repository.Get(id);
-            if (model != null)
-            {
-                
-                return View(model);
-            }
-            else
-            {
-                return RedirectToAction("PageNotFound", "Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult Update(Debs debs)
-        {
-            if (debs.Money != 0 )
-            {
-                var model = _repository.Update(debs);
-                if (model)
-                {
-                    Alerts.Type = 11;
-                    return RedirectToAction("Detail", "AccountClient", new { id = debs.AccountId });
-                }
-                else
-                {
-                    Alerts.Type = 13;
-                    return View(debs);
-                }
-            }
-            else
-            {
-                Alerts.Type = 13;
-                ViewBag.Response = Alerts.Type;
-                Alerts.Type = 0;
-                return View(debs);
-
-            }
-        }
-
-        //-----------v.2.0
         [ValidateAntiForgeryToken]
         [HttpPost]
         public ActionResult Add(Debs model)
@@ -85,6 +42,36 @@ namespace AccountSystem.Controllers
         public JsonResult Delete(int id)
         {
             return Json(_repository.Delete(id));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public JsonResult GetById(int id)
+        {
+            var model = _repository.Get(id);
+            if (model != null)
+            {
+                return Json(new { Deb = model },JsonRequestBehavior.AllowGet);
+            }
+            return Json(null,JsonRequestBehavior.AllowGet);
+        }
+
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public ActionResult Update(Debs debs)
+        {
+            if (debs.Money != 0)
+            {
+                if (_repository.Update(debs))
+                {
+                    TempData["response"] = "Actualizado correctamente";
+                    TempData["icon"] = "success";
+                    return RedirectToAction("Detail", "AccountClient", new { id = debs.AccountId });
+                }
+            }
+            TempData["response"] = "Lo sentimos, ha ocurrido un error";
+            TempData["icon"] = "error";
+            return View(debs);
         }
     }
 }

@@ -29,38 +29,6 @@ namespace AccountSystem.Controllers
             _debService = debService;
         }
 
-     
-        [HttpPost]
-        public ActionResult Pay (PayViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                
-                if(_repository.Get(model.AccountId)!= null){
-
-                    if (_repository.Pay(model))
-                    {
-                        Alerts.Type = 14;
-                    }
-                    else
-                    {
-                        Alerts.Type = 15;
-                    }
-
-                    return RedirectToAction("Detail", new { id = model.AccountId });
-                }
-                else
-                {
-                    return HttpNotFound("404");
-                }
-            }
-            else
-            {
-                Alerts.Type = 13;
-                return RedirectToAction("Detail", new { id = model.AccountId });
-            }
-        }
-
         [HttpGet]
         public ActionResult PayOff(int id)
         {
@@ -68,7 +36,7 @@ namespace AccountSystem.Controllers
             {
                 if (_repository.PayOff(id))
                 {
-                    Alerts.Type = 16;
+                    //Alerts.Type = 16;
                 }
 
                 return RedirectToAction("Detail", new { id });
@@ -100,7 +68,7 @@ namespace AccountSystem.Controllers
                 }
                 else
                 {
-                    Alerts.Type = 17;
+                    //Alerts.Type = 17;
                     return RedirectToAction("Detail", new { id });
                 }
             }

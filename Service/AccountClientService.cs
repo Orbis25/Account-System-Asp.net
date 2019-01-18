@@ -128,6 +128,10 @@ namespace Service
                 result.Account = _dbContext.Accounts
                            .Include(x => x.Client)
                            .Single(x => x.Id == id);
+                result.Account.Payments = _dbContext.Payments.Where(x => x.AccountId == id)
+                    .OrderByDescending(x => x.CreatedAt)
+                    .Skip((page - 1) * pageToQuantity)
+                    .Take(pageToQuantity).ToList();
 
                 result.Account.Debs = debs;
 
@@ -144,31 +148,6 @@ namespace Service
             return result;
         }
 
-        public bool Pay(PayViewModel model)
-        {
-            try
-            {
-                var account = _dbContext.Accounts.Single(x => x.Id == model.AccountId);
-                account.Total -= model.Amount;
-                Update(account);
-
-                var deb = _dbContext.Debs.Where(x => x.AccountId == model.AccountId).ToList();
-
-                foreach (var item in deb)
-                {
-                    _dbContext.Debs.Remove(item);
-                }
-                _dbContext.SaveChanges();
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-                throw;
-            }
-
-        }
 
         public bool PayOff(int id)
         {
@@ -203,8 +182,10 @@ namespace Service
                 ParameterFieldDefinitions cr;
                 ParameterFieldDefinition cr2;
                 ParameterValues cr3 = new ParameterValues();
-                ParameterDiscreteValue cr4 = new ParameterDiscreteValue();
-                cr4.Value = id;
+                ParameterDiscreteValue cr4 = new ParameterDiscreteValue
+                {
+                    Value = id
+                };
                 cr = report.DataDefinition.ParameterFields;
                 cr2 = cr["AccountId"];
                 cr3.Add(cr4);
@@ -271,7 +252,6 @@ namespace Service
             catch (Exception )
             {
                 return false;
-                throw;
             }
         }
 

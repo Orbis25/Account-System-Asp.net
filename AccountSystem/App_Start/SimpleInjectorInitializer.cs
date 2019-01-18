@@ -44,6 +44,7 @@ namespace AccountSystem.App_Start
             container.Register<IHomeService, HomeService>(Lifestyle.Transient);
             container.Register<IAccountService, ApplicationUserService>(Lifestyle.Transient);
             container.Register<IRequestService, RequestService>(Lifestyle.Transient);
+            container.Register<IPaymentService, PaymentService>(Lifestyle.Transient);
 
             //definir siempre estos debido a los constructores vacios
             container.Register<ApplicationSignInManager>();

@@ -33,6 +33,7 @@ namespace Service
                 account.Total += entity.Money;
                 _Account.Update(account);
                 _dbContext.SaveChanges();
+
                 return true;
             }
             catch (Exception)
@@ -58,23 +59,20 @@ namespace Service
             catch (Exception)
             {
                 return false;
-                throw;
             }
         }
 
         public Debs Get(int id)
         {
-            var result = new Debs();
             try
             {
-                result = _dbContext.Debs
+                return _dbContext.Debs
                     .Single(x => x.Id == id);
             }
             catch (Exception)
             {
-                result = null;
+                return null;
             }
-            return result;
         }
 
         public IEnumerable<Debs> GetAll(int page)
@@ -98,8 +96,10 @@ namespace Service
                   .OrderByDescending(x => x.DateTime)
                   .Skip((page - 1) * pageToQuantity)
                   .Take(pageToQuantity).ToList();
+
+                result.Account.Payments = _dbContext.Payments.Where(x => x.AccountId == model.IdAccount);
                
-                result.TotalOfRegister = _dbContext.Debs.Count();
+                result.TotalOfRegister = _dbContext.Debs.Count(x => x.AccountId == model.IdAccount && (x.DateTime >= from) && (x.DateTime <= to));
                 result.ActuallyPage = page;
                 result.RegisterByPage = pageToQuantity;
             }
@@ -115,16 +115,21 @@ namespace Service
             try
             {
                 var model = _dbContext.Debs.Single(x => x.Id == entity.Id);
-                model.Money = entity.Money;
-                model.Description = entity.Description;
-                _dbContext.Entry(model).State = EntityState.Modified;
-                _dbContext.SaveChanges();
-                return true;
+                var account = _Account.Get(entity.AccountId);
+                account.Total += entity.Money - model.Money;
+                if (_Account.Update(account))
+                {
+                    model.Money = entity.Money;
+                    model.Description = entity.Description;
+                    _dbContext.Entry(model).State = EntityState.Modified;
+                    _dbContext.SaveChanges();
+                    return true;
+                }
+                    return false;
             }
             catch (Exception)
             {
                 return false;
-                throw;
             }
         }
     }
