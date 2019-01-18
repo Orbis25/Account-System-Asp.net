@@ -64,7 +64,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-start" >
+                <div class="row justify-content-start">
                     <div class="col-6">
                         <h3 class="mb-2">Deudas</h3>
                         <form action="/AccountClient/filter" method="get">
@@ -105,12 +105,12 @@
                                             <td>@deb.Description</td>
                                             @if (User.IsInRole("Admin"))
                                             {
-                                            <td>
-                                                <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
-                                                <b> | </b>
-                                                <button class="far fa-edit text-info" onclick="GetById(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
+                                                <td>
+                                                    <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
+                                                    <b> | </b>
+                                                    <button class="far fa-edit text-info" onclick="GetById(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
 
-                                            </td>
+                                                </td>
                                             }
                                         </tr>
                                     }
@@ -157,7 +157,7 @@
                                                 <td>
                                                     <button class="fas fa-trash-alt text-danger" onclick="remove(@payment.Id,'/Payment/Delete','desea eliminarla')"></button>
                                                     <b> | </b>
-                                                    <button class="far fa-edit text-info" onclick="GetByIdPayment(@payment.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
+                                                    <button class="far fa-edit text-info" onclick="GetByIdPayment(@payment.Id)" data-toggle="modal" data-target="#exampleModal5"></button>
                                                 </td>
                                             }
                                         </tr>
@@ -293,6 +293,36 @@
         </div>
     </div>
 </div>
+<!--Modal Update Payment-->
+<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Abono</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/Payment/Update" id="pay" class="form-group" method="post">
+                    @Html.AntiForgeryToken()
+                    <div>
+                        <label>Monto</label>
+                        <input type="text" class="form-control" name="Quantity" id="quantityPayment" value="" placeholder="Ejemplo 99,99" />
+                        <input type="hidden" name="AccountId" id="accountIdPayment" value="" />
+                        <input type="hidden" name="id" id="idPaymentUpdate" value="" />
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 @section Scripts{
     @Html.Partial("_JsFunctionPartial")
@@ -309,7 +339,6 @@
         $('.input-daterange').datepicker({
             format: "dd/mm/yyyy"
         })
-
         function GetById(id) {
             fetch(`/Deb/GetById/${id}`)
                 .then(r => {
@@ -319,7 +348,7 @@
                         document.getElementById("Description").innerHTML = response.Deb.Descripcion;
                         document.getElementById("idDeb").value = response.Deb.Id;
                     }).catch(e => {
-                        console.log("error");
+                        console.log("error ");
                         window.location.reload()
                     })
                 })
@@ -327,11 +356,25 @@
                     console.log("error");
                 });
         }
-
         function GetByIdPayment(id) {
+            try {
 
+                fetch(`/Payment/GetById/${id}`).then(r => {
+                    r.json().then(response => {
+                        document.getElementById("accountIdPayment").value = response.payment.AccountId;
+                        document.getElementById("idPaymentUpdate").value = response.payment.Id;
+                        document.getElementById("quantityPayment").value = response.payment.Quantity;
+                    }).catch(error => {
+                        console.log("error json");
+                    })
+                }).catch(e => {
+                    console.log("error");
+                })
+
+            } catch (e) {
+                console.log("error connection");
+            }
         }
-
     </script>
 }
 

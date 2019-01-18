@@ -47,7 +47,8 @@ namespace Service
                 if (model != null)
                 {
                    Account account = _account.Get(model.Account.Id);
-                   account.Total -= model.Quantity;
+                    if (account.Total < model.Quantity) return false;
+                    account.Total += model.Quantity;
                     _account.Update(account);
                     _dbContext.Payments.Remove(model);
                     await _dbContext.SaveChangesAsync();
@@ -79,12 +80,15 @@ namespace Service
             {
                 var model = await _dbContext.Payments.Include(x => x.Account).SingleAsync(x => x.Id == entity.Id);
                 Account account = _account.Get(model.Account.Id);
-                account.Total = (entity.Quantity -= model.Quantity);
-                _account.Update(account);
-                model.Quantity = entity.Quantity;
-                _dbContext.Entry(model).State = EntityState.Modified;
-                await _dbContext.SaveChangesAsync();
-                return true;
+                account.Total -= (entity.Quantity - model.Quantity);
+                if (_account.Update(account))
+                {
+                    model.Quantity = entity.Quantity;
+                    _dbContext.Entry(model).State = EntityState.Modified;
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
             }
             catch (Exception)
             {

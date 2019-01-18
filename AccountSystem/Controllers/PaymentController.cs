@@ -26,9 +26,16 @@ namespace AccountSystem.Controllers
             model.CreatedAt = DateTime.Now;
             if (ModelState.IsValid && model.Quantity > 0)
             {
-                await _paymentService.Add(model);
-                TempData["response"] = "Pago realizado con exito";
-                TempData["icon"] = "success";
+                if (await _paymentService.Add(model)) {
+                    TempData["response"] = "Pago realizado con exito";
+                    TempData["icon"] = "success";
+                }
+                else
+                {
+                    TempData["response"] = "Lo, sentimos ha ocurrido un error";
+                    TempData["icon"] = "error";
+                }
+
             }
             else
             {
@@ -44,10 +51,13 @@ namespace AccountSystem.Controllers
             return Json(await _paymentService.Delete(id));
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> Update(int id)
+        public async Task<JsonResult> GetById(int id)
         {
-            return Json(new { payment = _paymentService.GetById(id) });
+            var model = await _paymentService.GetById(id);
+            if (model != null) return Json(new { payment = model },JsonRequestBehavior.AllowGet);
+            return Json(null);
         }
 
         [ValidateAntiForgeryToken]
@@ -61,13 +71,15 @@ namespace AccountSystem.Controllers
                 {
                     TempData["response"] = "Pago Actualizado";
                     TempData["icon"] = "success";
+                    return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
                 }
                 else
                 {
-                    TempData["response"] = "Lo sentimos , ha ocurrido un error";
+                    TempData["response"] = "Lo sentimos , revise que no sobre pase el limite del total";
                     TempData["icon"] = "error";
+                    return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
                 }
-                
+
             }
                 TempData["response"] = "Lo sentimos , ha ocurrido un error";
                 TempData["icon"] = "error";

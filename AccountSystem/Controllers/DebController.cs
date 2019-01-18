@@ -25,15 +25,17 @@ namespace AccountSystem.Controllers
             model.DateTime = DateTime.Now;
             if (ModelState.IsValid)
             {
-                _repository.Add(model);
-                TempData["response"] = "Agregado correctamente";
-                TempData["icon"] = "success";
+                if (_repository.Add(model))
+                {
+                    TempData["response"] = "Agregado correctamente";
+                    TempData["icon"] = "success";
+                    return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
+                }
             }
-            else
-            {
-                TempData["response"] = "Lo sentimos!, ha ocurrido un error";
+
+            TempData["response"] = "Lo sentimos!, ha ocurrido un error";
                 TempData["icon"] = "error";
-            }
+            
             return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
         }
 
@@ -60,7 +62,7 @@ namespace AccountSystem.Controllers
         [HttpPost]
         public ActionResult Update(Debs debs)
         {
-            if (debs.Money != 0)
+            if (debs.Money > 0)
             {
                 if (_repository.Update(debs))
                 {
@@ -71,7 +73,7 @@ namespace AccountSystem.Controllers
             }
             TempData["response"] = "Lo sentimos, ha ocurrido un error";
             TempData["icon"] = "error";
-            return View(debs);
+            return RedirectToAction("Detail", "AccountClient", new { id = debs.AccountId });
         }
     }
 }
