@@ -2,7 +2,9 @@
 using Model;
 using Service.Interface;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Service
@@ -10,26 +12,27 @@ namespace Service
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IAccountClientService _account;
-        public PaymentService(ApplicationDbContext dbContext , IAccountClientService account)
+        private readonly IDebService _deb;
+        public PaymentService(ApplicationDbContext dbContext , IDebService deb)
         {
             _dbContext = dbContext;
-            _account = account;
+            _deb = deb;
         }
-        public  async  Task<bool> Add(Payment entity)
+
+        public  async Task<bool> Add(Payment entity)
         {
             try
             {
-                var account = await _dbContext.Accounts.SingleAsync(x => x.Id == entity.AccountId);
-                if (account.Total >= entity.Quantity )
+                var deb = await _dbContext.Debs.SingleAsync(x => x.Id == entity.DebId);
+                if (deb.Money >= entity.Quantity)
                 {
-                    account.Total -= entity.Quantity;
-                    _account.Update(account);
+                    deb.Money -= entity.Quantity;
+                    _deb.Update(deb);
                     _dbContext.Payments.Add(entity);
-                     await _dbContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync();
                     return true;
                 }
-                
+
                 return false;
             }
             catch (Exception)
@@ -43,22 +46,53 @@ namespace Service
         {
             try
             {
-                var model = await _dbContext.Payments.Include(x => x.Account).SingleAsync(x => x.Id == id);
-                if (model != null)
-                {
-                   Account account = _account.Get(model.Account.Id);
-                    if (account.Total < model.Quantity) return false;
-                    account.Total += model.Quantity;
-                    _account.Update(account);
-                    _dbContext.Payments.Remove(model);
-                    await _dbContext.SaveChangesAsync();
-                    return true;
-                }
+                //var model = await _dbContext.Payments.Include(x => x.Account).SingleAsync(x => x.Id == id);
+                //if (model != null)
+                //{
+                //   Account account = _account.Get(model.Account.Id);
+                //    if (account.Total >= model.Quantity)
+                //    {
+                //        account.Total += model.Quantity;
+                //        _account.Update(account);
+                //        _dbContext.Payments.Remove(model);
+                //    }
+                //    else
+                //    {
+                //        _dbContext.Payments.Remove(model);
+                //    }
+
+                //    await _dbContext.SaveChangesAsync();
+                //    return true;
+                //}
                 return false;
             }
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<Payment>> GetAll(int debId)
+        {
+            try
+            {
+                var model = new List<Payment>();
+                foreach (var item in await _dbContext.Payments.Where(x => x.DebId == debId).ToListAsync())
+                {
+                    Payment payment = new Payment
+                    {
+                        CreatedAt = Convert.ToDateTime(item.CreatedAt.ToShortDateString()),
+                        DebId = item.DebId,
+                        Id = item.Id,
+                        Quantity = item.Quantity
+                    };
+                    model.Add(payment);
+                }
+                return model;
+            } 
+            catch (Exception)
+            {
+                return null;    
             }
         }
 
@@ -78,16 +112,16 @@ namespace Service
         {
             try
             {
-                var model = await _dbContext.Payments.Include(x => x.Account).SingleAsync(x => x.Id == entity.Id);
-                Account account = _account.Get(model.Account.Id);
-                account.Total -= (entity.Quantity - model.Quantity);
-                if (_account.Update(account))
-                {
-                    model.Quantity = entity.Quantity;
-                    _dbContext.Entry(model).State = EntityState.Modified;
-                    await _dbContext.SaveChangesAsync();
-                    return true;
-                }
+                //var model = await _dbContext.Payments.Include(x => x.Account).SingleAsync(x => x.Id == entity.Id);
+                //Account account = _account.Get(model.Account.Id);
+                //account.Total -= (entity.Quantity - model.Quantity);
+                //if (_account.Update(account))
+                //{
+                //    model.Quantity = entity.Quantity;
+                //    _dbContext.Entry(model).State = EntityState.Modified;
+                //    await _dbContext.SaveChangesAsync();
+                //    return true;
+                //}
                 return false;
             }
             catch (Exception)

@@ -1,5 +1,7 @@
 ﻿
 @model Model.ViewModels.DetailPageViewModel
+@using Model.Enums;
+
 <link href="~/Content/css/bootstrap-datepicker.css" rel="stylesheet" />
 
 <div class="page-container">
@@ -49,10 +51,10 @@
                             </div>
                             <div class="card-body">
                                 <div class="mx-auto d-block">
-                                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal">
+                                    <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#exampleModal">
                                         Agregar Credito
                                     </button>
-                                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#exampleModal2">
+                                    <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#exampleModal2">
                                         Abonar
                                     </button>
                                     <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModal3">
@@ -73,13 +75,13 @@
                                 <input type="text" name="from" class="form-control" value="">
                                 <div class="input-group-addon ml-1 mr-1">Desde/Hasta</div>
                                 <input type="text" name="to" class="form-control" value="">
-                                <button class="btn btn-primary ml-2">Buscar</button>
+                                <button class="btn btn-dark ml-2">Buscar</button>
                             </div>
                         </form>
                     </div>
                 </div>
                 <div class="row m-t-30">
-                    <div class="col-md-7">
+                    <div class="col-md-12">
                         <!-- DATA TABLE-->
                         <div class="table-responsive m-b-40">
                             <table class="table table-borderless table-data3">
@@ -88,31 +90,49 @@
                                         <th>Monto</th>
                                         <th>Fecha</th>
                                         <th>Descripcion</th>
+                                        <th>Pagos</th>
+
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <th>Accion</th>}
+
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @{string paid = string.Empty;}
                                     @foreach (var deb in Model.Account.Debs)
                                     {
-                                        <tr>
-                                            <td>@deb.Money</td>
-                                            <td>@deb.DateTime.ToString("dd/MM/yyyy")</td>
-                                            @{
-                                                deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
-                                            }
-                                            <td>@deb.Description</td>
-                                            @if (User.IsInRole("Admin"))
+
+                                        string deleted = deb.Deleted == Deleted.yes ? "text-white bg-danger" : string.Empty;
+                                        paid = deb.Money <= 0 ? "bg-success text-white" : string.Empty; 
+                                    <tr>
+                                        <td class="@deleted @paid">@deb.Money</td>
+                                        <td class="@deleted  @paid">@deb.DateTime.ToString("dd/MM/yyyy")</td>
+                                        @{
+                                            deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
+                                        }
+                                        <td class="@deleted  @paid">@deb.Description</td>
+                                        <td class="@deleted  @paid"><button class="btn btn-sm btn-dark" data-toggle="modal" onclick="GetAllPayment(@deb.Id)" data-target="#exampleModal6">Detalles</button></td>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            if (deb.Deleted != Deleted.yes && deb.Money > 0)
                                             {
                                                 <td>
                                                     <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
                                                     <b> | </b>
                                                     <button class="far fa-edit text-info" onclick="GetById(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
-
                                                 </td>
                                             }
-                                        </tr>
+                                            else if (deb.Money <= 0)
+                                            {
+                                                <td class="@paid ">Pagada</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="@deleted ">Eliminada</td>
+                                            }
+                                        }
+                                    </tr>
                                     }
                                 </tbody>
                             </table>
@@ -130,40 +150,6 @@
                                     @Html.Partial("_PaginationPartial", Model)
                                 }
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <!-- DATA TABLE-->
-                        <div class="table-responsive m-b-40">
-                            <h3 class="mb-2">Pagos</h3>
-                            <table class="table table-borderless table-data3">
-                                <thead>
-                                    <tr>
-                                        <th>Monto</th>
-                                        <th>Fecha</th>
-                                        @if (User.IsInRole("Admin"))
-                                        {
-                                            <th>Accion</th>}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var payment in Model.Account.Payments)
-                                    {
-                                        <tr>
-                                            <td>@payment.Quantity</td>
-                                            <td>@payment.CreatedAt.ToString("dd/MM/yyyy")</td>
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                <td>
-                                                    <button class="fas fa-trash-alt text-danger" onclick="remove(@payment.Id,'/Payment/Delete','desea eliminarla')"></button>
-                                                    <b> | </b>
-                                                    <button class="far fa-edit text-info" onclick="GetByIdPayment(@payment.Id)" data-toggle="modal" data-target="#exampleModal5"></button>
-                                                </td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -322,6 +308,59 @@
         </div>
     </div>
 </div>
+<!--Modal Payments-->
+
+<div class="modal fade" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detalle de pagos</h5>
+                <button type="button" class="close" data-dismiss="modal" onclick="window.location.reload()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+            <div class="table-responsive m-b-40">
+                <div class="row">
+                    <div class="col-12">
+                        @if (paid != string.Empty)
+                        {
+                            <h6>Desea abonar?</h6>
+                            <form action="/Payment/Add" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="DebId" id="DebId" value="" />
+                                <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                                <div>
+                                    <label>Monto</label>
+                                    <input type="number" required class="form-control" name="Quantity" value="" />
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-dark mt-2">Abonar</button>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                </div>
+                <table class="table table-borderless table-data3 mt-5">
+                    <thead>
+                        <tr>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <th>Accion</th>}
+                        </tr>
+                    </thead>
+                    <tbody id="bady-table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section Scripts{
@@ -339,6 +378,7 @@
         $('.input-daterange').datepicker({
             format: "dd/mm/yyyy"
         })
+        //Get Debs byId
         function GetById(id) {
             fetch(`/Deb/GetById/${id}`)
                 .then(r => {
@@ -356,6 +396,7 @@
                     console.log("error");
                 });
         }
+        //Get Payment byId
         function GetByIdPayment(id) {
             try {
 
@@ -375,6 +416,43 @@
                 console.log("error connection");
             }
         }
+        //Get Payments byIdDeb
+        function GetAllPayment(value) {
+            let body = document.getElementById("bady-table");
+            document.getElementById("DebId").value = value;                    
+            fetch(`/Payment/GetAll/${value}`).then(r => {
+                r.json().then(response => {
+                    response.Payments.forEach((element) => {
+                        let tr = document.createElement('tr');
+                        let amount = document.createElement('td');
+                        let createdAt = document.createElement('td');
+                        let id = document.createElement('td');
+                        let deleteBtn = document.createElement("button");
+                        let edit = document.createElement("button");
+                        amount.innerHTML = element.Quantity;
+                        createdAt.innerHTML = element.CreatedAt
+                        tr.appendChild(amount);
+                        tr.appendChild(createdAt);
+                        deleteBtn.addEventListener("click", () => {remove(element.Id, '/Payment/Delete', 'desea eliminar este pago');})
+                        deleteBtn.className = "fas fa-trash-alt text-danger";
+                        id.appendChild(deleteBtn)
+                        edit.className = "far fa-edit text-info ml-2";
+                        id.appendChild(edit)
+                        tr.appendChild(id);
+                        body.appendChild(tr);
+
+                    });
+                }).catch(e => {
+                   console.log("error resultado ")
+                    })
+            }).catch(e => {
+                console.log("error");
+                })
+        }
+        //reload when modal close
+        $('#exampleModal6').on('hidden.bs.modal', () => {
+            location.reload();
+        })
     </script>
 }
 

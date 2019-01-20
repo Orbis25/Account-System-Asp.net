@@ -1,4 +1,5 @@
 ﻿using Model;
+using Model.ViewModels;
 using Service.Interface;
 using System;
 using System.Collections.Generic;
@@ -18,31 +19,44 @@ namespace AccountSystem.Controllers
         {
             _paymentService = paymentService;
         }
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<JsonResult> GetAll(int id)
+        {
+            return Json( new { Payments = await _paymentService.GetAll(id) } ,JsonRequestBehavior.AllowGet);
+        }
 
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<ActionResult> Add(Payment model)
+        public async Task<ActionResult> Add(AddPaymentViewModel model)
         {
-            model.CreatedAt = DateTime.Now;
+            Payment payment = new Payment
+            {
+                CreatedAt = DateTime.Now,
+                DebId = model.DebId,
+                Id = model.Id,
+                Quantity = model.Quantity
+            };
+
             if (ModelState.IsValid && model.Quantity > 0)
             {
-                if (await _paymentService.Add(model)) {
+                if (await _paymentService.Add(payment)) {
                     TempData["response"] = "Pago realizado con exito";
                     TempData["icon"] = "success";
                 }
                 else
                 {
-                    TempData["response"] = "Lo, sentimos ha ocurrido un error";
+                    TempData["response"] = "Lo sentimos, no puede hacer un abono";
                     TempData["icon"] = "error";
                 }
 
             }
             else
             {
-                TempData["response"] = "Lo, sentimos ha ocurrido un error";
+                TempData["response"] = "Lo sentimos, ha ocurrido un error";
                 TempData["icon"] = "error";
             }
-            return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
+           return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
         }
 
         [HttpPost]
@@ -71,19 +85,20 @@ namespace AccountSystem.Controllers
                 {
                     TempData["response"] = "Pago Actualizado";
                     TempData["icon"] = "success";
-                    return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
+                    //return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
                 }
                 else
                 {
                     TempData["response"] = "Lo sentimos , revise que no sobre pase el limite del total";
                     TempData["icon"] = "error";
-                    return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
+                    //return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
                 }
 
             }
                 TempData["response"] = "Lo sentimos , ha ocurrido un error";
                 TempData["icon"] = "error";
-            return RedirectToAction("Detail","AccountClient", new { id = model.AccountId});
+            return View();
+           // return RedirectToAction("Detail","AccountClient", new { id = model.AccountId});
         }
 
 

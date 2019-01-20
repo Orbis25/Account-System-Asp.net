@@ -167,6 +167,14 @@
     <Compile Include="Migrations\201901170324210_AddPaymentTable.Designer.cs">
       <DependentUpon>201901170324210_AddPaymentTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901190134310_AddDeletedEnum.cs" />
+    <Compile Include="Migrations\201901190134310_AddDeletedEnum.Designer.cs">
+      <DependentUpon>201901190134310_AddDeletedEnum.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901190331471_RelationShipInDebAndPayments.cs" />
+    <Compile Include="Migrations\201901190331471_RelationShipInDebAndPayments.Designer.cs">
+      <DependentUpon>201901190331471_RelationShipInDebAndPayments.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -240,6 +248,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201901170324210_AddPaymentTable.resx">
       <DependentUpon>201901170324210_AddPaymentTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901190134310_AddDeletedEnum.resx">
+      <DependentUpon>201901190134310_AddDeletedEnum.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901190331471_RelationShipInDebAndPayments.resx">
+      <DependentUpon>201901190331471_RelationShipInDebAndPayments.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

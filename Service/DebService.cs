@@ -50,9 +50,18 @@ namespace Service
                 var model = _dbContext.Debs.Single(x => x.Id == id);
                 var account = _dbContext.Accounts
                              .Single(x => x.Id == model.AccountId);
-                account.Total -= model.Money;
-                _dbContext.Debs.Remove(model);
-                _Account.Update(account);
+                if (account.Total >= model.Money)
+                {
+                    account.Total -= model.Money;
+                    model.Deleted = Model.Enums.Deleted.yes;
+                    _Account.Update(account);
+                }
+                else
+                {
+                    model.Deleted = Model.Enums.Deleted.yes;
+                    _Account.Update(account);
+                }
+                _dbContext.Entry(model).State = EntityState.Modified;
                 _dbContext.SaveChanges();
                 return true;
             }
@@ -95,15 +104,12 @@ namespace Service
                   .Where(x => x.AccountId == model.IdAccount && (x.DateTime >= from) && (x.DateTime <= to))
                   .OrderByDescending(x => x.DateTime)
                   .Skip((page - 1) * pageToQuantity)
-                  .Take(pageToQuantity).ToList();
-
-                result.Account.Payments = _dbContext.Payments.Where(x => x.AccountId == model.IdAccount);
-               
+                  .Take(pageToQuantity).ToList();               
                 result.TotalOfRegister = _dbContext.Debs.Count(x => x.AccountId == model.IdAccount && (x.DateTime >= from) && (x.DateTime <= to));
                 result.ActuallyPage = page;
                 result.RegisterByPage = pageToQuantity;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 result = null;
             }

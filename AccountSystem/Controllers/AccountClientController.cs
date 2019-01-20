@@ -36,7 +36,6 @@ namespace AccountSystem.Controllers
             {
                 if (_repository.PayOff(id))
                 {
-                    //Alerts.Type = 16;
                 }
 
                 return RedirectToAction("Detail", new { id });

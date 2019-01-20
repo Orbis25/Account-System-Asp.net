@@ -90,11 +90,13 @@
     <Compile Include="ApplicationUser.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Debs.cs" />
+    <Compile Include="Enums\Deleted.cs" />
     <Compile Include="OthersModels\PageModel.cs" />
     <Compile Include="Payment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="ViewModels\AddAccountViewModel.cs" />
+    <Compile Include="ViewModels\AddPaymentViewModel.cs" />
     <Compile Include="ViewModels\DeleteDebsViewModel.cs" />
     <Compile Include="ViewModels\DetailPageViewModel.cs" />
     <Compile Include="ViewModels\FilterDebsViewModel.cs" />

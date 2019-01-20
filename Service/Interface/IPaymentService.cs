@@ -10,6 +10,7 @@ namespace Service.Interface
 {
     public interface IPaymentService
     {
+        Task<IEnumerable<Payment>> GetAll(int debId);
         Task<bool>  Add(Payment entity);
         Task<bool> Delete(int id);
         Task<bool> Update(Payment entity);

@@ -107,7 +107,7 @@ namespace Service
             }
             catch (Exception)
             {
-                throw;
+                result = null;
             }
             return result;
         }
@@ -128,10 +128,6 @@ namespace Service
                 result.Account = _dbContext.Accounts
                            .Include(x => x.Client)
                            .Single(x => x.Id == id);
-                result.Account.Payments = _dbContext.Payments.Where(x => x.AccountId == id)
-                    .OrderByDescending(x => x.CreatedAt)
-                    .Skip((page - 1) * pageToQuantity)
-                    .Take(pageToQuantity).ToList();
 
                 result.Account.Debs = debs;
 
@@ -141,7 +137,7 @@ namespace Service
                 result.TotalOfRegister = totalOfDebs;
                 result.RegisterByPage = pageToQuantity;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 result = null;
             }

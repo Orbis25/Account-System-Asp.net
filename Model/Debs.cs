@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Model.Enums;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,5 +18,7 @@ namespace Model
         public int AccountId { get; set; }
         [ForeignKey("AccountId")]
         public Account Account { get; set; }
+        public Deleted Deleted { get; set; } 
+        public IEnumerable<Payment> Payments { get; set; }
     }
 }

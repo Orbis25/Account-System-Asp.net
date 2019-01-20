@@ -11,14 +11,13 @@ namespace Model
     public class Payment
     {
         public int Id { get; set; }
-        [Required]
-        public int AccountId { get; set; }
-        [ForeignKey("AccountId")]
-        public Account Account { get;set; }
-        [Required]
         public DateTime CreatedAt { get; set; }
         [Required]
         [Range(0, 9999999999999999.99)]
         public decimal Quantity { get; set; }
+        [Required]
+        public int DebId { get; set; }
+        [ForeignKey("DebId")]
+        public Debs Deb { get; set; }
     }
 }
