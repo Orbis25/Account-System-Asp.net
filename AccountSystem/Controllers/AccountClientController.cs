@@ -1,5 +1,6 @@
 ﻿using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
+using Microsoft.AspNet.Identity;
 using Model;
 using Model.ViewModels;
 using Service.Interface;
@@ -129,6 +130,12 @@ namespace AccountSystem.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public ViewResult MyAccounts(int page = 1)
+        {
+            return View("Index",_repository.MyAccounts(User.Identity.GetUserId(),page));
+        }
+
         [HttpPost]
         public JsonResult Delete(int id)
         {
@@ -175,6 +182,7 @@ namespace AccountSystem.Controllers
         {
             page = page == 0 ? 1 : page;
             var model = _repository.GetWithClientAndDebs(id, page);
+            ViewBag.Total = _debService.SumAll(id);
             if (model != null)
             {
                 if (TempData["response"] != null)

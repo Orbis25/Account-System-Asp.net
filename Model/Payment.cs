@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,5 +20,6 @@ namespace Model
         public int DebId { get; set; }
         [ForeignKey("DebId")]
         public Debs Deb { get; set; }
+        public Deleted Deleted { get; set; }
     }
 }

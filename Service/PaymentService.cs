@@ -46,24 +46,25 @@ namespace Service
         {
             try
             {
-                //var model = await _dbContext.Payments.Include(x => x.Account).SingleAsync(x => x.Id == id);
-                //if (model != null)
-                //{
-                //   Account account = _account.Get(model.Account.Id);
-                //    if (account.Total >= model.Quantity)
-                //    {
-                //        account.Total += model.Quantity;
-                //        _account.Update(account);
-                //        _dbContext.Payments.Remove(model);
-                //    }
-                //    else
-                //    {
-                //        _dbContext.Payments.Remove(model);
-                //    }
-
-                //    await _dbContext.SaveChangesAsync();
-                //    return true;
-                //}
+                var model = await _dbContext.Payments.Include(x => x.Deb).SingleAsync(x => x.Id == id);
+                if (model != null)
+                {
+                    Debs deb = _deb.Get(model.Deb.Id);
+                    if (deb.Money >= model.Quantity)
+                    {
+                        deb.Money += model.Quantity;
+                        model.Deleted = Model.Enums.Deleted.yes;
+                        _deb.Update(deb);
+                    }
+                    else
+                    {
+                        model.Deleted = Model.Enums.Deleted.yes;
+                        _deb.Update(deb);
+                    }
+                    _dbContext.Entry(model).State = EntityState.Modified;
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
                 return false;
             }
             catch (Exception)
@@ -76,19 +77,7 @@ namespace Service
         {
             try
             {
-                var model = new List<Payment>();
-                foreach (var item in await _dbContext.Payments.Where(x => x.DebId == debId).ToListAsync())
-                {
-                    Payment payment = new Payment
-                    {
-                        CreatedAt = Convert.ToDateTime(item.CreatedAt.ToShortDateString()),
-                        DebId = item.DebId,
-                        Id = item.Id,
-                        Quantity = item.Quantity
-                    };
-                    model.Add(payment);
-                }
-                return model;
+                return await _dbContext.Payments.Where(x => x.DebId == debId).ToListAsync();
             } 
             catch (Exception)
             {
@@ -108,20 +97,39 @@ namespace Service
             }
         }
 
+        public async Task<bool> PayAll(int debId)
+        {
+            try
+            {
+                     _dbContext.Payments.Where(x => x.DebId == debId).ToList()
+                    .ForEach(x => x.Deleted = Model.Enums.Deleted.yes);
+                var model = _dbContext.Debs.Find(debId);
+                model.Money = 0;
+                _deb.Update(model);
+               await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> Update(Payment entity)
         {
             try
             {
-                //var model = await _dbContext.Payments.Include(x => x.Account).SingleAsync(x => x.Id == entity.Id);
-                //Account account = _account.Get(model.Account.Id);
-                //account.Total -= (entity.Quantity - model.Quantity);
-                //if (_account.Update(account))
-                //{
-                //    model.Quantity = entity.Quantity;
-                //    _dbContext.Entry(model).State = EntityState.Modified;
-                //    await _dbContext.SaveChangesAsync();
-                //    return true;
-                //}
+                var model = await _dbContext.Payments.Include(x => x.Deb).SingleAsync(x => x.Id == entity.Id);
+                Debs deb = _deb.Get(model.Deb.Id);
+                deb.Money -= (entity.Quantity - model.Quantity);
+                if (_deb.Update(deb))
+                {
+                    model.Quantity = entity.Quantity;
+                    _dbContext.Entry(model).State = EntityState.Modified;
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
                 return false;
             }
             catch (Exception)

@@ -48,19 +48,8 @@ namespace Service
             try
             {
                 var model = _dbContext.Debs.Single(x => x.Id == id);
-                var account = _dbContext.Accounts
-                             .Single(x => x.Id == model.AccountId);
-                if (account.Total >= model.Money)
-                {
-                    account.Total -= model.Money;
-                    model.Deleted = Model.Enums.Deleted.yes;
-                    _Account.Update(account);
-                }
-                else
-                {
-                    model.Deleted = Model.Enums.Deleted.yes;
-                    _Account.Update(account);
-                }
+                 model.Deleted = Model.Enums.Deleted.yes;
+                 model.Money = 0;
                 _dbContext.Entry(model).State = EntityState.Modified;
                 _dbContext.SaveChanges();
                 return true;
@@ -121,21 +110,27 @@ namespace Service
             try
             {
                 var model = _dbContext.Debs.Single(x => x.Id == entity.Id);
-                var account = _Account.Get(entity.AccountId);
-                account.Total += entity.Money - model.Money;
-                if (_Account.Update(account))
-                {
                     model.Money = entity.Money;
                     model.Description = entity.Description;
                     _dbContext.Entry(model).State = EntityState.Modified;
                     _dbContext.SaveChanges();
                     return true;
-                }
-                    return false;
             }
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public decimal SumAll(int accountId)
+        {
+            try
+            {
+                return _dbContext.Debs.Where(x => x.AccountId == accountId).Sum(x => x.Money);
+            }
+            catch (Exception)
+            {
+                return 0;
             }
         }
     }

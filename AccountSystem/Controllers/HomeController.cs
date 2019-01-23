@@ -33,6 +33,9 @@ namespace AccountSystem.Controllers
             ViewBag.Menbers = _homeService.GetAllMenbers();
             ViewBag.Debs = _homeService.GetAllDebs();
             ViewBag.Account = _homeService.GetAllAccounts();
+            ViewBag.myAccounts = _homeService.GetAllMyAccount(User.Identity.GetUserId());
+            ViewBag.myDebs = _homeService.GetAllMyDebs(User.Identity.GetUserId());
+            ViewBag.myRequest = _homeService.GetAllMyRequest(User.Identity.GetUserId());
             return View();
         }
 

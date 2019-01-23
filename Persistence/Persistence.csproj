@@ -175,6 +175,10 @@
     <Compile Include="Migrations\201901190331471_RelationShipInDebAndPayments.Designer.cs">
       <DependentUpon>201901190331471_RelationShipInDebAndPayments.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901200248442_AddEnumDeletedInPayment.cs" />
+    <Compile Include="Migrations\201901200248442_AddEnumDeletedInPayment.Designer.cs">
+      <DependentUpon>201901200248442_AddEnumDeletedInPayment.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -254,6 +258,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201901190331471_RelationShipInDebAndPayments.resx">
       <DependentUpon>201901190331471_RelationShipInDebAndPayments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901200248442_AddEnumDeletedInPayment.resx">
+      <DependentUpon>201901200248442_AddEnumDeletedInPayment.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -12,5 +12,8 @@ namespace Service.Interface
         decimal GetAllDebs();
         int GetAllAccounts();
 
+        int GetAllMyAccount(string id);
+        int GetAllMyDebs(string id);
+        int GetAllMyRequest(string id);
     }
 }

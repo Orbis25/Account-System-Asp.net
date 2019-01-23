@@ -40,7 +40,9 @@
                             <div class="card-body">
                                 <strong class="card-title">Alias:  @Model.Account.Name</strong><br />
                                 <strong class="card-subtitle mb-4 mt-3 "><i class="far fa-user"></i> Cliente: @Model.Account.Client.Name @Model.Account.Client.LastName</strong> <br />
-                                <strong class="card-subtitle mb-4 mt-3 "><i class="far fa-money-bill-alt"></i> Total:  $@Model.Account.Total </strong>
+                                <strong class="card-subtitle mb-4 mt-3 "><i class="far fa-money-bill-alt"></i> Total Tomado:  $@Model.Account.Total </strong><br />
+                                <strong class="card-subtitle mb-4 mt-3 "><i class="far fa-money-bill-alt"></i> Total restante:  $@ViewBag.Total </strong>
+
                             </div>
                         </div>
                     </div>
@@ -51,15 +53,15 @@
                             </div>
                             <div class="card-body">
                                 <div class="mx-auto d-block">
-                                    <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#exampleModal">
-                                        Agregar Credito
-                                    </button>
-                                    <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#exampleModal2">
-                                        Abonar
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModal3">
-                                        Saldar
-                                    </button>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#exampleModal">
+                                            Agregar Credito
+                                        </button>
+                                        <button type="button" class="btn btn-dark btn-block" data-toggle="modal" data-target="#exampleModal3">
+                                            Saldar
+                                        </button>
+                                    }
                                     @Html.ActionLink("Generar Constancia", "GeneratePdf", "AccountClient", new { id = Model.Account.Id }, new { @class = "btn btn-danger btn-block mt-2 " })
                                 </div>
                             </div>
@@ -94,45 +96,57 @@
 
                                         @if (User.IsInRole("Admin"))
                                         {
-                                            <th>Accion</th>}
+                                            <th>Accion</th>
+                                        }
 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @{string paid = string.Empty;}
+                                    @{string paid = string.Empty; }
                                     @foreach (var deb in Model.Account.Debs)
                                     {
+                                        if (!User.IsInRole("Admin") && deb.Deleted == Deleted.yes)
+                                        {
+                                            continue;
+                                        }
 
                                         string deleted = deb.Deleted == Deleted.yes ? "text-white bg-danger" : string.Empty;
-                                        paid = deb.Money <= 0 ? "bg-success text-white" : string.Empty; 
-                                    <tr>
-                                        <td class="@deleted @paid">@deb.Money</td>
-                                        <td class="@deleted  @paid">@deb.DateTime.ToString("dd/MM/yyyy")</td>
-                                        @{
-                                            deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
-                                        }
-                                        <td class="@deleted  @paid">@deb.Description</td>
-                                        <td class="@deleted  @paid"><button class="btn btn-sm btn-dark" data-toggle="modal" onclick="GetAllPayment(@deb.Id)" data-target="#exampleModal6">Detalles</button></td>
-                                        @if (User.IsInRole("Admin"))
-                                        {
-                                            if (deb.Deleted != Deleted.yes && deb.Money > 0)
-                                            {
-                                                <td>
-                                                    <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
-                                                    <b> | </b>
-                                                    <button class="far fa-edit text-info" onclick="GetById(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
-                                                </td>
+                                        paid = deb.Deleted == Deleted.payment ? "bg-success text-white" : string.Empty;
+                                        <tr>
+                                            <td class="@deleted @paid">@deb.Money</td>
+                                            <td class="@deleted  @paid">@deb.DateTime.ToString("dd/MM/yyyy")</td>
+                                            @{
+                                                deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
                                             }
-                                            else if (deb.Money <= 0)
+                                            <td class="@deleted  @paid">@deb.Description</td>
+                                            @if (deb.Deleted != Deleted.yes)
                                             {
-                                                <td class="@paid ">Pagada</td>
+                                                <td class="@deleted  @paid"><button class="btn btn-sm btn-dark" data-toggle="modal" onclick="GetAllPayment(@deb.Id)" data-target="#exampleModal6">Detalles</button></td>
                                             }
                                             else
                                             {
-                                                <td class="@deleted ">Eliminada</td>
+                                                <td class="@deleted  @paid">-----------</td>
                                             }
-                                        }
-                                    </tr>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                if (deb.Deleted != Deleted.yes && deb.Deleted != Deleted.payment)
+                                                {
+                                                    <td>
+                                                        <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
+                                                        <b> | </b>
+                                                        <button class="far fa-edit text-info" onclick="GetById(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
+                                                    </td>
+                                                }
+                                                else if (deb.Deleted == Deleted.payment)
+                                                {
+                                                    <td class="@paid ">Pagada</td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="@deleted ">Eliminada</td>
+                                                }
+                                            }
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -158,160 +172,171 @@
         </div>
     </div>
 </div>
-<!--Modal Add-->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Credito</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row justify-content-center">
-                    <div class="col-">
-                        <form action="/Deb/Add" id="Debs" class="form-group" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="AccountId" value="@Model.Account.Id" />
-                            <div>
-                                <label for="Money">Cantidad</label>
+@if (User.IsInRole("Admin"))
+{
+    <!--Modal Add-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Agregar Credito</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center">
+                        <div class="col-">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <form action="/Deb/Add" id="Debs" class="form-group" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                                    <div>
+                                        <label for="Money">Cantidad</label>
 
-                                <input type="text" id="Mount" lang="es" class="form-control" name="Money" required placeholder="Ejemplo (99,99) " value="" />
-                            </div>
-                            <div>
-                                <label for="Description">Descripcion</label>
-                                <textArea name="Description" class="form-control"></textArea>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Agregar</button>
-                            </div>
-                        </form>
+                                        <input type="text" id="Mount" lang="es" class="form-control" name="Money" required placeholder="Ejemplo (99,99) " value="" />
+                                    </div>
+                                    <div>
+                                        <label for="Description">Descripcion</label>
+                                        <textArea name="Description" class="form-control"></textArea>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary">Agregar</button>
+                                    </div>
+                                </form>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Modal Pay -->
-<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Abono</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <!-- Modal Pay -->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Abono</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/Payment/Add" id="pay" class="form-group" method="post">
+                        @Html.AntiForgeryToken()
+                        <div>
+                            <label>Monto</label>
+                            <input type="text" class="form-control" name="Quantity" value="" placeholder="Ejemplo 99,99" />
+                            <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                        </div>
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Abonar</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
-            <div class="modal-body">
-                <form action="/Payment/Add" id="pay" class="form-group" method="post">
-                    @Html.AntiForgeryToken()
-                    <div>
-                        <label>Monto</label>
-                        <input type="text" class="form-control" name="Quantity" value="" placeholder="Ejemplo 99,99" />
-                        <input type="hidden" name="AccountId" value="@Model.Account.Id" />
-                    </div>
+        </div>
+    </div>
+    <!-- Modal clear all -->
+    <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Saldar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>¿Seguro que desea saldar la cuenta?</div>
                     <div class="mt-2">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Abonar</button>
+                        @Html.ActionLink("Saldar", "PayOff", new { id = Model.Account.Id }, new { @class = "btn btn-success" })
                     </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- Modal clear all -->
-<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Saldar</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div>¿Seguro que desea saldar la cuenta?</div>
-                <div class="mt-2">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    @Html.ActionLink("Saldar", "PayOff", new { id = Model.Account.Id }, new { @class = "btn btn-success" })
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
-</div>
-<!-- Modal Update-->
-<div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Credito</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row justify-content-center">
-                    <div class="col-">
-                        <form action="/Deb/Update" id="Debs" class="form-group" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="AccountId" value="@Model.Account.Id" />
-                            <input type="hidden" name="id" id="idDeb" />
-                            <div>
-                                <label for="Money">Cantidad</label>
-                                <input type="text" id="Money" lang="es" class="form-control" name="Money" required placeholder="Ejemplo (99,99)" />
-                            </div>
-                            <div>
-                                <label for="Description">Descripcion</label>
-                                <textArea name="Description" id="Description" class="form-control"></textArea>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary" id="send">Actualizar</button>
-                            </div>
-                        </form>
+    <!-- Modal Update-->
+    <div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tomar Credito</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row justify-content-center">
+                        <div class="col-">
+                            <form action="/Deb/Update" id="Debs" class="form-group" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                                <input type="hidden" name="id" id="idDeb" />
+                                <div>
+                                    <label for="Money">Cantidad</label>
+                                    <input type="text" id="Money" lang="es" class="form-control" name="Money" required placeholder="Ejemplo (99,99)" />
+                                </div>
+                                <div>
+                                    <label for="Description">Descripcion</label>
+                                    <textArea name="Description" id="Description" class="form-control"></textArea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary" id="send">Actualizar</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!--Modal Update Payment-->
-<div class="modal fade" id="exampleModal5" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Abono</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="/Payment/Update" id="pay" class="form-group" method="post">
-                    @Html.AntiForgeryToken()
-                    <div>
-                        <label>Monto</label>
-                        <input type="text" class="form-control" name="Quantity" id="quantityPayment" value="" placeholder="Ejemplo 99,99" />
-                        <input type="hidden" name="AccountId" id="accountIdPayment" value="" />
-                        <input type="hidden" name="id" id="idPaymentUpdate" value="" />
+    <!--Modal Update Payment-->
+    <div class="modal fade" id="exampleModal5" tabindex="-1" style="z-index:3000" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Abono</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            <form action="/Payment/Update" id="pay" class="form-group" method="post">
+                                @Html.AntiForgeryToken()
+                                <div>
+                                    <label>Monto</label>
+                                    <input type="text" class="form-control" name="Quantity" id="quantityP" value="" placeholder="Ejemplo 99,99" />
+                                    <input type="hidden" name="DebId" id="debIdP" value="" />
+                                    <input type="hidden" name="id" id="idP" value="" />
+                                </div>
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-success">Actualizar</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="mt-2">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Actualizar</button>
-                    </div>
-                </form>
-            </div>
+                </div>
 
+            </div>
         </div>
     </div>
-</div>
-<!--Modal Payments-->
+    <!--Modal Payments-->
 
-<div class="modal fade" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+}
+
+<div class="modal fade bd-example-modal-lg" id="exampleModal6" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Detalle de pagos</h5>
@@ -319,27 +344,30 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="col-md-12">
-            <div class="table-responsive m-b-40">
+            <div class="modal-body modal-lg">
                 <div class="row">
                     <div class="col-12">
-                        @if (paid != string.Empty)
-                        {
-                            <h6>Desea abonar?</h6>
-                            <form action="/Payment/Add" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="DebId" id="DebId" value="" />
+                        <form action="/Payment/Add" method="post">
+                            <input type="hidden" name="DebId" id="DebId" value="" />
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <span id="UserRole" style="display:none">True</span>
                                 <input type="hidden" name="AccountId" value="@Model.Account.Id" />
+                                <h6>Desea abonar?</h6>
+                                @Html.AntiForgeryToken()
+
                                 <div>
                                     <label>Monto</label>
                                     <input type="number" required class="form-control" name="Quantity" value="" />
                                 </div>
                                 <div>
                                     <button type="submit" class="btn btn-dark mt-2">Abonar</button>
+                                    <button type="button" onclick="PayDeb()" class="btn btn-danger mt-2">Saldar</button>
                                 </div>
-                            </form>
-                        }
+                            }
+                        </form>
+
                     </div>
                 </div>
                 <table class="table table-borderless table-data3 mt-5">
@@ -352,16 +380,12 @@
                                 <th>Accion</th>}
                         </tr>
                     </thead>
-                    <tbody id="bady-table">
-                    </tbody>
+                    <tbody id="bady-table"></tbody>
                 </table>
-            </div>
-        </div>
             </div>
         </div>
     </div>
 </div>
-
 
 @section Scripts{
     @Html.Partial("_JsFunctionPartial")
@@ -374,81 +398,63 @@
         </script>
     }
     <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script src="~/Scripts/funtions.js"></script>
     <script>
-        $('.input-daterange').datepicker({
-            format: "dd/mm/yyyy"
-        })
-        //Get Debs byId
-        function GetById(id) {
-            fetch(`/Deb/GetById/${id}`)
-                .then(r => {
-                    r.json().then(response => {
-                        document.getElementById("Money").value = response.Deb.Money;
-                        response.Deb.Descripcion = response.Deb.Descripcion == undefined ? 'Ninguna' : response.Deb.Descripcion;
-                        document.getElementById("Description").innerHTML = response.Deb.Descripcion;
-                        document.getElementById("idDeb").value = response.Deb.Id;
-                    }).catch(e => {
-                        console.log("error ");
-                        window.location.reload()
-                    })
-                })
-                .catch(e => {
-                    console.log("error");
-                });
-        }
-        //Get Payment byId
-        function GetByIdPayment(id) {
-            try {
-
-                fetch(`/Payment/GetById/${id}`).then(r => {
-                    r.json().then(response => {
-                        document.getElementById("accountIdPayment").value = response.payment.AccountId;
-                        document.getElementById("idPaymentUpdate").value = response.payment.Id;
-                        document.getElementById("quantityPayment").value = response.payment.Quantity;
-                    }).catch(error => {
-                        console.log("error json");
-                    })
-                }).catch(e => {
-                    console.log("error");
-                })
-
-            } catch (e) {
-                console.log("error connection");
-            }
-        }
         //Get Payments byIdDeb
-        function GetAllPayment(value) {
-            let body = document.getElementById("bady-table");
-            document.getElementById("DebId").value = value;                    
-            fetch(`/Payment/GetAll/${value}`).then(r => {
-                r.json().then(response => {
-                    response.Payments.forEach((element) => {
-                        let tr = document.createElement('tr');
-                        let amount = document.createElement('td');
-                        let createdAt = document.createElement('td');
-                        let id = document.createElement('td');
-                        let deleteBtn = document.createElement("button");
-                        let edit = document.createElement("button");
-                        amount.innerHTML = element.Quantity;
-                        createdAt.innerHTML = element.CreatedAt
-                        tr.appendChild(amount);
-                        tr.appendChild(createdAt);
-                        deleteBtn.addEventListener("click", () => {remove(element.Id, '/Payment/Delete', 'desea eliminar este pago');})
+function GetAllPayment(value) {
+    let body = document.getElementById("bady-table");
+    document.getElementById("DebId").value = value;
+    fetch(`/Payment/GetAll/${value}`).then(r => {
+        r.json().then(response => {
+            console.log(response)
+            response.Payments.forEach((element) => {
+                let tr = document.createElement('tr');
+                let amount = document.createElement('td');
+                let createdAt = document.createElement('td');
+                let id = document.createElement('td');
+                let deleteBtn = document.createElement("button");
+                let edit = document.createElement("button");
+                if (element.Deleted == 1) {
+                    amount.className = "text-white bg-danger";
+                    createdAt.className = "text-white bg-danger";
+                    id.className = "text-white bg-danger";
+                    id.innerHTML = "Eliminado";
+                } else {
+                    if (document.getElementById('UserRole') != null) {
+                        if ('@User.IsInRole("Admin")' == document.getElementById('UserRole').innerHTML ) {
+                        deleteBtn.addEventListener("click", () => { remove(element.Id, '/Payment/Delete', 'desea eliminar este pago'); })
                         deleteBtn.className = "fas fa-trash-alt text-danger";
                         id.appendChild(deleteBtn)
                         edit.className = "far fa-edit text-info ml-2";
-                        id.appendChild(edit)
-                        tr.appendChild(id);
-                        body.appendChild(tr);
+                        edit.setAttribute("data-toggle", 'modal');
+                        edit.setAttribute('data-target', '#exampleModal5');
+                        edit.addEventListener('click', () => { GetById(element.Id) });
+                        id.appendChild(edit);
+                         }
+                    }
+                }
+                amount.innerHTML = element.Quantity;
+                createdAt.innerHTML = new Date(parseInt(element.CreatedAt.substr(6))).getDate() + '/' + new Date(parseInt(element.CreatedAt.substr(6))).getMonth() + 1 + '/' + new Date(parseInt(element.CreatedAt.substr(6))).getFullYear();
+                if (document.getElementById('UserRole') != null && element.Deleted == 1) {
+                    tr.appendChild(amount);
+                    tr.appendChild(createdAt);
+                } else if (element.Deleted == 0) {
+                    tr.appendChild(amount);
+                    tr.appendChild(createdAt);
+                }
+                if (document.getElementById('UserRole')) {
+                    tr.appendChild(id);
+                }
+                body.appendChild(tr);
 
-                    });
-                }).catch(e => {
-                   console.log("error resultado ")
-                    })
-            }).catch(e => {
-                console.log("error");
-                })
-        }
+            });
+        }).catch(e => {
+            console.log("error resultado ")
+        })
+    }).catch(e => {
+        console.log("error");
+    })
+}
         //reload when modal close
         $('#exampleModal6').on('hidden.bs.modal', () => {
             location.reload();

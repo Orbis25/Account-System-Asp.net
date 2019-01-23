@@ -12,5 +12,6 @@ namespace Service.Interface
     public interface IDebService : IRepository<Debs>
     {
         DetailPageViewModel Filter(FilterDebsViewModel model,int page);
+        decimal SumAll(int accountId);
     }
 }

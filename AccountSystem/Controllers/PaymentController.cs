@@ -15,9 +15,11 @@ namespace AccountSystem.Controllers
     {
 
         private readonly IPaymentService _paymentService;
-        public PaymentController(IPaymentService paymentService)
+        private readonly IDebService _debService;
+        public PaymentController(IPaymentService paymentService , IDebService debService)
         {
             _paymentService = paymentService;
+            _debService = debService;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -38,7 +40,7 @@ namespace AccountSystem.Controllers
                 Quantity = model.Quantity
             };
 
-            if (ModelState.IsValid && model.Quantity > 0)
+            if (ModelState.IsValid && model.Quantity > 0 && _debService.Get(payment.DebId).Deleted != Model.Enums.Deleted.yes)
             {
                 if (await _paymentService.Add(payment)) {
                     TempData["response"] = "Pago realizado con exito";
@@ -77,30 +79,28 @@ namespace AccountSystem.Controllers
         [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<ActionResult> Update(Payment model)
-        {
-            model.CreatedAt = DateTime.Now;
+        {            
             if (ModelState.IsValid)
             {
                 if (await _paymentService.Update(model))
                 {
                     TempData["response"] = "Pago Actualizado";
                     TempData["icon"] = "success";
-                    //return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
                 }
                 else
                 {
                     TempData["response"] = "Lo sentimos , revise que no sobre pase el limite del total";
                     TempData["icon"] = "error";
-                    //return RedirectToAction("Detail", "AccountClient", new { id = model.AccountId });
                 }
 
             }
-                TempData["response"] = "Lo sentimos , ha ocurrido un error";
-                TempData["icon"] = "error";
-            return View();
-           // return RedirectToAction("Detail","AccountClient", new { id = model.AccountId});
+            return RedirectToAction("Detail","AccountClient", new { id = _debService.Get(model.DebId).AccountId});
         }
 
-
+        [HttpPost]
+        public async Task<JsonResult> PayAll(int id)
+        {
+            return Json(await _paymentService.PayAll(id));
+        }
     }
 }

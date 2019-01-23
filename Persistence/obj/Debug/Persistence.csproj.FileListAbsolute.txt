@@ -101,3 +101,4 @@ C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-mast
 C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.AddPaymentTable.resources
 C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.AddDeletedEnum.resources
 C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.RelationShipInDebAndPayments.resources
+C:\Users\orbis\Documents\Visual Studio 2017\Projects\Account-System-Asp.net-master\AccountSystem\Persistence\obj\Debug\Persistence.Migrations.AddEnumDeletedInPayment.resources

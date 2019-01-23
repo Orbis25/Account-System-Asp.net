@@ -15,7 +15,7 @@
                 @if (User.IsInRole("Admin"))
                 {
                     <div class="row m-t-25">
-                        <div class="col-sm-6 col-lg-3">
+                        <div class="col-sm-6 col-lg-12">
                             <div class="overview-item overview-item--c1">
                                 <div class="overview__inner">
                                     <div class="overview-box clearfix">
@@ -33,7 +33,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-lg-3">
+                        <div class="col-sm-6 col-lg-6">
                             <div class="overview-item overview-item--c2">
                                 <div class="overview__inner">
                                     <div class="overview-box clearfix">
@@ -76,7 +76,7 @@
                 else
                 {
                     <div class="row m-t-25">
-                        <div class="col-sm-6 col-lg-3">
+                        <div class="col-sm-6 col-lg-12">
                             <div class="overview-item overview-item--c1">
                                 <div class="overview__inner">
                                     <div class="overview-box clearfix">
@@ -84,7 +84,7 @@
                                             <i class="zmdi zmdi-account-o"></i>
                                         </div>
                                         <div class="text">
-                                            <h2>@ViewBag.Menbers</h2>
+                                            <h2>@ViewBag.myAccounts</h2>
                                             <span>Cuentas</span>
                                         </div>
                                     </div>
@@ -94,7 +94,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-lg-3">
+                        <div class="col-sm-6 col-lg-6">
                             <div class="overview-item overview-item--c2">
                                 <div class="overview__inner">
                                     <div class="overview-box clearfix">
@@ -102,7 +102,7 @@
                                             <i class="fas fa-user"></i>
                                         </div>
                                         <div class="text">
-                                            <h2>@ViewBag.Account</h2>
+                                            <h2>@ViewBag.myRequest</h2>
                                             <span>Solicitudes</span>
                                         </div>
                                     </div>
@@ -120,8 +120,8 @@
                                             <i class="zmdi zmdi-money"></i>
                                         </div>
                                         <div class="text">
-                                            <h2>$@ViewBag.Debs</h2>
-                                            <span>Total en Deudas</span>
+                                            <h2>@ViewBag.myDebs</h2>
+                                            <span>Deudas</span>
                                         </div>
                                     </div>
                                     <div class="overview-chart">
@@ -133,70 +133,6 @@
 
                     </div>
                 }
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="au-card recent-report">
-                            <div class="au-card-inner">
-                                <h3 class="title-2">recent reports</h3>
-                                <div class="chart-info">
-                                    <div class="chart-info__left">
-                                        <div class="chart-note">
-                                            <span class="dot dot--blue"></span>
-                                            <span>products</span>
-                                        </div>
-                                        <div class="chart-note mr-0">
-                                            <span class="dot dot--green"></span>
-                                            <span>services</span>
-                                        </div>
-                                    </div>
-                                    <div class="chart-info__right">
-                                        <div class="chart-statis">
-                                            <span class="index incre">
-                                                <i class="zmdi zmdi-long-arrow-up"></i>25%
-                                            </span>
-                                            <span class="label">products</span>
-                                        </div>
-                                        <div class="chart-statis mr-0">
-                                            <span class="index decre">
-                                                <i class="zmdi zmdi-long-arrow-down"></i>10%
-                                            </span>
-                                            <span class="label">services</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="recent-report__chart">
-                                    <canvas id="recent-rep-chart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="au-card chart-percent-card">
-                            <div class="au-card-inner">
-                                <h3 class="title-2 tm-b-5">char by %</h3>
-                                <div class="row no-gutters">
-                                    <div class="col-xl-6">
-                                        <div class="chart-note-wrap">
-                                            <div class="chart-note mr-0 d-block">
-                                                <span class="dot dot--blue"></span>
-                                                <span>products</span>
-                                            </div>
-                                            <div class="chart-note mr-0 d-block">
-                                                <span class="dot dot--red"></span>
-                                                <span>services</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6">
-                                        <div class="percent-chart">
-                                            <canvas id="percent-chart"></canvas>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </div>

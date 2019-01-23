@@ -9,6 +9,8 @@ namespace Model.Enums
     public enum Deleted
     {
         yes = 1,
-        no = 2
+        no = 2,
+        payment = 3
+
     }
 }

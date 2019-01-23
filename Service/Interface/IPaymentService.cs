@@ -15,5 +15,6 @@ namespace Service.Interface
         Task<bool> Delete(int id);
         Task<bool> Update(Payment entity);
         Task<Payment> GetById(int id);
+        Task<bool> PayAll(int debId);
     }
 }

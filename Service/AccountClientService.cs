@@ -144,26 +144,46 @@ namespace Service
             return result;
         }
 
+        public AccountPageViewModel MyAccounts(string id , int page)
+        {
+            var result = new AccountPageViewModel();
+            try
+            {
+                var client = _dbContext.Clients.Single(c => c.ApplicationUserId == id);
+                int pageToQuantity = 10;
+                result.Accounts = _dbContext.Accounts
+                    .OrderBy(x => x.CreatedAt)
+                    .Skip((page - 1) * pageToQuantity)
+                    .Take(pageToQuantity)
+                    .Include(x => x.Client)
+                    .Where(x => x.ClientId == client.Id);
+                result.ActuallyPage = page;
+                result.TotalOfRegister = _dbContext.Accounts
+                    .Where(x => x.ClientId == client.Id).Count();
+                result.RegisterByPage = pageToQuantity;
+
+            }
+            catch (Exception e)
+            {
+                return new AccountPageViewModel();
+            }
+            return result;
+        }
 
         public bool PayOff(int id)
         {
             try
             {
-                var account = Get(id);
-                account.Total = 0;
-                Update(account);
-                var debs = _dbContext.Debs.Where(x => x.AccountId == account.Id).ToList();
-                foreach(var item in debs)
-                {
-                    _dbContext.Debs.Remove(item);
-                }
+                _dbContext.Debs.Where(x => x.AccountId == id).Where(x => x.Deleted != Model.Enums.Deleted.yes).ToList()
+                   .ForEach(x => x.Deleted = Model.Enums.Deleted.payment);
+                 _dbContext.Debs.Where(x => x.AccountId == id).Where(x => x.Deleted != Model.Enums.Deleted.yes).ToList()
+                 .ForEach(x => x.Money = 0);
                 _dbContext.SaveChanges();
                 return true;
             }
             catch (Exception)
             {
                 return false;
-                throw;
             }
         }
 
