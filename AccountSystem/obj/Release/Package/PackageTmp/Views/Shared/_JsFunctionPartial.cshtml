@@ -1,0 +1,48 @@
+﻿
+<script>
+    //funciones reutilizables con ajax para ser llamadas en las vistas necesarias
+    function remove(value, action, text) {
+        swal({
+            title: "¿Esta Seguro?",
+            text: `Esta seguro que ${text}, esta accion no se puede deshacer`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    fetch(`${action}/${value}`, {
+                        method: 'POST',
+                        body: JSON.stringify(value)
+                    })
+                        .then(r => {
+                            r.json().then(r => {
+                                if (r) {
+                                    swal("Se ha eliminado correctamente", {
+                                        icon: "success",
+                                    }).then(ok => {
+                                        if (ok) {
+                                            window.location.reload();
+                                        }
+                                        })
+                                        .catch(e => {
+                                            window.location.reload();
+                                        })
+                                } else {
+                                    swal("ha ocurrido un error");
+                                }
+                            }).catch(e => {
+                                swal("ha ocurrido un error");
+                            });
+                        })
+                        .catch(e => {
+                            swal("ha ocurrido un error");
+                        })
+
+                } else {
+                    swal("Se ha cancelado la operacion");
+                }
+            });
+    }
+
+</script>

@@ -1,164 +1,257 @@
 ﻿
-@{ 
+@{
     ViewBag.Title = "Cuentas";
 }
 @model  Model.ViewModels.AccountPageViewModel
+@using Microsoft.AspNet.Identity;
+<div class="page-container">
+    <div class="main-content">
+        <div class="section__content section__content--p30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="overview-wrap">
+                            <h2 class="title-1 mb-5">Cuentas</h2>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <button class="au-btn au-btn-icon au-btn--blue" data-toggle="modal" data-target="#mediumModal">
+                                    <i class="zmdi zmdi-plus"></i>Nueva
+                                </button>
+                            }
+                        </div>
+                        @Html.Partial("_FindPartial", "accountclient")
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="row m-t-30">
+                            <div class="col-md-12">
+                                <!-- DATA TABLE-->
+                                <div class="table-responsive m-b-40">
+                                    <table class="table table-borderless table-data3">
+                                        <thead>
+                                            <tr>
+                                                <th>Alias</th>
+                                                <th>Cliente</th>
+                                                <th>Fecha de creacion</th>
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <th>Acciones</th>
+                                                }
+                                                else
+                                                {
+                                                    <th>Detalle</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.Accounts)
+                                            {
+                                            <tr>
+                                                <td scope="row">@item.Name </td>
+                                                <td>@item.Client.Name @item.Client.LastName</td>
+                                                <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <td>
+                                                        <button class="btn btn-danger" onclick="remove(@item.Id,'accountclient/delete', 'eliminara la cuenta?')">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                        <b> | </b>
+                                                        <button class="btn btn-info" onclick="edit(@item.Id)" data-toggle="modal" data-target="#mediumModal2">
+                                                            <i class="far fa-edit"></i>
+                                                        </button>
+                                                        <b> | </b>
+                                                        <a class="btn btn-success" href="@Url.Action("Detail","AccountClient",new { id = item.Id })">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                }
+                                                else {
+                                                    <td>
+                                                        <a class="fas fa-eye text-info mr-3" href="@Url.Action("Detail","AccountClient",new { id = item.Id })">
+                                                        </a>
+                                                    </td>
+                                                }
+                                            </tr>
+                                            }
 
-<div class="text-center m-3"><i class="far fa-user text-primary" style="font-size:100px"></i></div>
-<h2 class="text-center ">Listado de Cuentas </h2>
-<div class="mt-3">Cantidad de Cuentas : <span><b>@Model.TotalOfRegister</b></span></div>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col mb-4">
+                                        @{ var page = ViewBag.pagination;}
 
-<div class="row ml-1 justify-content-between">
-    <div class="col-">
-        @Html.ActionLink(" ", "Client", "Home", null, new { @class = "btn btn-outline-info mt-1 fas fa-arrow-left" })
-        <button class="btn btn-outline-info fas fa-search mt-1 " data-toggle="modal" data-target="#ModalSerach"></button>
-    </div>
-    <div class="col- mr-3">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#ModalInfo">Ayuda</button>
+                                        @if (page == "1")
+                                        {
+                                            @Html.Partial("_PaginationSearchPartial", Model)
+                                        }
+                                        else
+                                        {
+                                            @Html.Partial("_PaginationPartial", Model)
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<hr />
-<table class="table" id="example">
-    <thead class="bg-primary">
-        <tr>
-            <th scope="col" class="text-white">Nombre de la Cuenta</th>
-            <th scope="col" class="text-white">Nombre del Cliente</th>
-            <th scope="col" class="text-white">Accion</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Accounts)
-        {
-            <tr>
-                <th scope="row">@item.Name </th>
-                <th scope="row">@item.Client.Name @item.Client.LastName </th>
-
-                <td>
-                    @Html.ActionLink(" ", "Delete", new { id = item.Id }, new { @class = "btn btn-danger fas fa-trash-alt" })
-                    <b> | </b>
-                    @Html.ActionLink(" ", "Update", null, new { id = item.Id }, new { @class = "btn btn-info far fa-edit" })
-                    <b> | </b>
-                    @Html.ActionLink(" ", "Detail", null, new { id = item.Id }, new { @class = "btn btn-success fas fa-info-circle" })
-
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<!-- Modal -->
-<div class="modal fade" id="ModalSerach" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Buscar Cuenta</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body text-xl-center">
-                <div>
-                    <h1 class="fas fa-search text-center"></h1>
+@if (User.IsInRole("Admin"))
+{
+    <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mediumModalLabel">Nueva Cuenta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div>
-                    <div class="row justify-content-sm-center">
-                        <div class="col-">
-                            <form action="/AccountClient/Search" id="formAddAccount" class="form-group" method="get">
-                                <input type="text" class="form-control mt-3" name="parameter" value="" placeholder="Ingrese para buscar" />
-                                <button type="submit" class="mt-3 btn btn-primary">Buscar</button>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h3 class="text-center title-2">Cuenta</h3>
+                            </div>
+                            <hr>
+                            <form action="/accountclient/add" id="add-request" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label for="cc-payment" class="control-label mb-1"><span class="text-danger">*</span> Alias</label>
+                                    <input type="text" class="form-control" name="name" required value="" />
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-12 col-md-9">
+                                        <label for="select" class=" form-control-label"><span class="text-danger">*</span>Cliente</label>
+                                        <select name="clientId" class="form-control" required>
+                                            <option></option>
+                                            @foreach (var client in ViewBag.clients)
+                                            {
+                                                if (User.Identity.GetUserId().ToString() == client.ApplicationUserId)
+                                                {
+                                                    continue;
+                                                }
+                                                <option value="@client.Id">@client.Name @client.LastName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-12 col-md-9">
+                                        <label for="select" class=" form-control-label"><span class="text-danger">*</span>Solicitud</label>
+                                        <select name="requestId" class="form-control" required>
+                                            <option></option>
+                                            @foreach (var request in ViewBag.requests)
+                                            {
+                                                if (request.State == false)
+                                                {
+                                                    continue;
+                                                }
+                                                <option value="@request.Id">@request.Descripcion -- @request.ApplicationUser.UserName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button type="submit" id="btn-add" class="btn btn-info btn-block">
+                                        Crear
+                                    </button>
+                                    <button data-dismiss="modal" class="btn btn-secondary btn-block">
+                                        Cancelar
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            </div>
         </div>
     </div>
-</div>
-<!-- Modal -->
-<div class="modal fade" id="ModalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Informacion</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-            <div class="modal-body ">
-                <div>
-                    <div class="text-center mb-5">
-                        <h1 class="fas fa-info text-center"></h1>
-                        <b class="text-center">nformacion</b>
-                    </div>
-
-                    <div>
-
-                        <button class="btn btn-outline-info fas fa-arrow-left mt-1 "></button>
-                        <span class="mt-1">Vuelve a la pagina de inicio </span>
-                    </div>
-                    <hr />
-                    <div>
-                        <button class="btn btn-outline-info fas fa-search mt-1 "></button>
-                        <span class="mt-1">Lanza una ventana para buscar una cuenta</span>
-                    </div>
-                    <hr />
-                    <div>
-                        <button class="btn btn-outline-info fas far fa-edit mt-1 "></button>
-                        <span class="mt-1">Redirige a una pagina para editar el Nombre de la cuenta seleccionada</span>
-                    </div>
-                    <hr />
-                    <div>
-                        <button class="btn btn-outline-danger fas fa-trash-alt mt-1 "></button>
-                        <span class="mt-1">Redirige a una pagina para confirmar que desea eliminar una cuenta</span>
-                    </div>
+    <div class="modal fade" id="mediumModal2" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mediumModalLabel">Editar Cuenta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div>
-                    <div class="row justify-content-sm-center">
-                        <div class="col-">
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h3 class="text-center title-2">Cuenta</h3>
+                            </div>
+                            <hr>
+                            <form action="/accountclient/update" id="add-request" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="Id" id="id-account" value="" />
+                                <div class="form-group">
+                                    <label for="cc-payment" class="control-label mb-1"><span class="text-danger">*</span> Alias</label>
+                                    <input type="text" class="form-control" id="name" name="name" required value="" />
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-12 col-md-9">
+                                        <label for="select" class=" form-control-label">Cliente</label>
+                                        <input type="text" class="form-control" id="client1" name="none" required disabled value="" />
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-12 col-md-9">
+                                        <label for="select" class=" form-control-label">Solicitud</label>
+                                        <input type="text" class="form-control" id="request" name="no" required disabled value="" />
+                                    </div>
+                                </div>
 
+                                <div>
+                                    <button type="submit" id="btn-add" class="btn btn-info btn-block">
+                                        Actualizar
+                                    </button>
+                                    <button data-dismiss="modal" class="btn btn-secondary btn-block">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            </div>
         </div>
     </div>
-</div>
-
-@{ var page = ViewBag.pagination;}
-
-@if (page == "1")
-{
-   @Html.Partial("_PaginationSearchPartial", Model)
-}
-else
-{
-    @Html.Partial("_PaginationPartial", Model)
 }
 
-<script src="~/Scripts/sweetalert.min.js"></script>
-
-@if (ViewBag.response == 6)
-{
+@section Scripts{
+    @Html.Partial("_JsFunctionPartial")
+    @if (ViewBag.Alert != null)
+    {
+        <script type="text/javascript">
+       swal('@ViewBag.Alert', {
+           icon : '@ViewBag.Icon'
+       })
+        </script>
+    }
     <script>
-        swal("Operacion Realizada Con Exito!", "Cuenta Creada!", "success");
-    </script>
-}
-else if (ViewBag.Response == 8)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cuenta Actualizada!", "success");
-    </script>
-}
-else if (ViewBag.Response == 9)
-{
-    <script>
-        swal("Operacion Realizada Con Exito!", "Cuenta Eliminada!", "success");
+        function edit(id) {
+            fetch(`/accountclient/getById/${id}`,
+                { method: 'GET' })
+                .then(r => {
+                    r.json().then(response => {
+                        document.getElementById('id-account').value = `${response.Id}`
+                        document.getElementById('client1').value = `${response.Client.Name} ${response.Client.LastName}`;
+                        document.getElementById('request').value = `${response.Request.Descripcion}`
+                        document.getElementById('name').value = `${response.Name}`
+                    })
+                        .catch(error => {
+                            console.log("error :" + error);
+                        })
+                })
+                .catch(e => {
+                    console.log("error :" + e);
+                })
+        }
     </script>
 }

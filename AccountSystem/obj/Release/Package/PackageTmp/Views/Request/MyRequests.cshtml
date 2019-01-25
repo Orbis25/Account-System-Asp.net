@@ -1,0 +1,118 @@
+﻿@model Model.ViewModels.UserRequestViewModel
+
+<div class="page-container">
+    <div class="main-content">
+        <div class="section__content section__content--p30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="overview-wrap">
+                            <h2 class="title-1 mb-5">Solicitudes</h2>
+                            <button class="au-btn au-btn-icon au-btn--blue" data-toggle="modal" data-target="#mediumModal">
+                                <i class="zmdi zmdi-plus"></i>Nueva
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row m-t-30">
+                        <div class="col-md-12">
+                            <!-- DATA TABLE-->
+                            <div class="table-responsive m-b-40">
+                                <table class="table table-borderless table-data3">
+                                    <thead>
+                                        <tr>
+                                            <th>Estado</th>
+                                            <th>Descripcion</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Requests)
+                                        {
+                                            <tr>
+                                                @{
+                                                    string style = item.State == true ? "text-success" : "text-danger";
+                                                    string state = item.State == true ? "Aprovada" : "En Proceso";
+                                                }
+                                                <td scope="row" class="@style">@state </td>
+                                                <td>@item.Descripcion</td>
+                                                <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <div class="col mb-4">
+                                    @*@{ var page = ViewBag.pagination;}
+
+                                        @if (page == "1")
+                                        {
+                                            @Html.Partial("_PaginationSearchPartial", Model)
+                                        }
+                                        else
+                                        {
+                                            @Html.Partial("_PaginationPartial", Model)
+                                        }*@
+                                </div>
+                            </div>
+                            <!-- END DATA TABLE-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediumModalLabel">Nueva Solicitud</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h3 class="text-center title-2">Solicitud</h3>
+                        </div>
+                        <hr>
+                        <form action="/request/add" id="add-request" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="ApplicationUserId" value="@Model.Client.ApplicationUserId" />
+                            <div class="form-group">
+                                <label for="cc-payment" class="control-label mb-1"><span class="text-danger">*</span> Descripcion</label>
+                                <textarea name="Descripcion" class="form-control" required></textarea>
+                            </div>
+                            <div>
+                                <button type="submit" id="btn-add" class="btn btn-info btn-block">
+                                    Enviar
+                                </button>
+                                <button data-dismiss="modal" class="btn btn-secondary btn-block">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @if (ViewBag.status != null)
+    {
+     <script>
+         swal('@ViewBag.status', {
+             icon: '@ViewBag.icon',
+         });
+     </script>
+    }
+}

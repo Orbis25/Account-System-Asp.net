@@ -104,7 +104,7 @@ namespace Service
                      _dbContext.Payments.Where(x => x.DebId == debId).ToList()
                     .ForEach(x => x.Deleted = Model.Enums.Deleted.yes);
                 var model = _dbContext.Debs.Find(debId);
-                model.Money = 0;
+                model.Deleted = Model.Enums.Deleted.payment;
                 _deb.Update(model);
                await _dbContext.SaveChangesAsync();
 

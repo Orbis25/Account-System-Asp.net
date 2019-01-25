@@ -94,7 +94,7 @@ namespace Service
             }
             catch (Exception)
             {
-                return null;
+                return new List<Request>();
             }
             return model;
         }
@@ -108,7 +108,7 @@ namespace Service
             }
             catch (Exception)
             {
-                return null;
+                return new List<Request>();
             }
 
             return model;

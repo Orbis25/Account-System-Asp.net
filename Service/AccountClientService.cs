@@ -176,8 +176,6 @@ namespace Service
             {
                 _dbContext.Debs.Where(x => x.AccountId == id).Where(x => x.Deleted != Model.Enums.Deleted.yes).ToList()
                    .ForEach(x => x.Deleted = Model.Enums.Deleted.payment);
-                 _dbContext.Debs.Where(x => x.AccountId == id).Where(x => x.Deleted != Model.Enums.Deleted.yes).ToList()
-                 .ForEach(x => x.Money = 0);
                 _dbContext.SaveChanges();
                 return true;
             }

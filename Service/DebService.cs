@@ -126,7 +126,8 @@ namespace Service
         {
             try
             {
-                return _dbContext.Debs.Where(x => x.AccountId == accountId).Sum(x => x.Money);
+                return _dbContext.Debs.Where(x => x.AccountId == accountId && x.Deleted != Model.Enums.Deleted.payment && x.Deleted != Model.Enums.Deleted.yes)
+                    .Sum(x => x.Money);
             }
             catch (Exception)
             {

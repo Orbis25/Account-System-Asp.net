@@ -3,24 +3,13 @@
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
-    @Html.AntiForgeryToken()
-
-<ul class="nav navbar-nav navbar-right">
-    <li>
-        <div class="dropdown">
-            <a class="text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <b>
-                    <i class="fas fa-user-circle"></i>
-                    @User.Identity.GetUserName() !
-                </b>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-    <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Cerrar sesión</a>
-    </div>
-    </div>
-    </li>
-
-</ul>
+        @Html.AntiForgeryToken()
+        <div class="account-dropdown__body">
+            <div class="account-dropdown__item">
+                @Html.ActionLink("Perfil","UserProfile","Account")
+                <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Cerrar sesión</a>
+            </div>
+        </div>
     }
 }
 else

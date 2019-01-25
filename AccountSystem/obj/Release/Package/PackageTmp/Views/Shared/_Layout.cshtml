@@ -1,53 +1,279 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@using Microsoft.AspNet.Identity;
+
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="~/Content/Icon/favicon-16x16.png" />
-    <title>SDC | @ViewBag.Title</title>
-    @Styles.Render("~/Content/css")
-    @Styles.Render("~/Content/toastr")
-    @Scripts.Render("~/bundles/modernizr")
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <!-- Required meta tags-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="au theme template">
+    <meta name="author" content="Hau Nguyen">
+    <meta name="keywords" content="au theme template">
+
+    <!-- Title Page-->
+    <title>Dashboard</title>
+
+    <!-- Fontfaces CSS-->
+    <link href="~/Content/css/font-face.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/font-awesome-5/css/fontawesome-all.min.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+
+    <!-- Bootstrap CSS-->
+    <link href="~/Content/vendor/bootstrap-4.1/bootstrap.min.css" rel="stylesheet" media="all">
+
+    <!-- Vendor CSS-->
+    <link href="~/Content/vendor/animsition/animsition.min.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/wow/animate.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/css-hamburgers/hamburgers.min.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/slick/slick.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="~/Content/vendor/perfect-scrollbar/perfect-scrollbar.css" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="~/Content/css/theme.css" rel="stylesheet" media="all">
+
+
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-dark fixed-top">
-        <div class="ml-5">
-            <img src="~/Content/Icon/android-icon-36x36.png" alt="Alternate Text" />
-            @Html.ActionLink("Sistema de Cuentas", "Index", "Home", new { area = "" }, new { @class = "navbar-brand text-white" })
-        </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse row justify-content-end" id="navbarNavAltMarkup">
-            <div class="navbar-nav col-4">
-                    @Html.Partial("_LoginPartial")
-            </div>
-            <div>
-            </div>
-        </div>
-    </nav>
-    <div class="container body-content ">
-        <div class="m-3">
-            --
-        </div>
-        @RenderBody()
-        <hr class="mt-5" />
-        <footer class="mt-5">
-            <div class="row justify-content-center">
-                <div class="col-">
-                    <p>&copy; @DateTime.Now.Year - Desarrollado por Orbis Alonzo G.</p>
+
+<body class="animsition">
+    <div class="page-wrapper">
+        <!-- HEADER MOBILE-->
+        <br class="d-lg-none"/><br class="d-lg-none" /><br class="d-lg-none" />
+        <header class="header-mobile d-block ">
+            <div class="header-mobile__bar">
+                <div class="container-fluid">
+                    <div class="header-mobile-inner">
+                        <a class="logo" href="/home/index"> 
+                                @{
+                                    string title = User.IsInRole("Admin") ? "Panel Administrador" : "Panel Usuario";
+                                }
+                                @title
+                        </a>
+                        <button class="hamburger hamburger--slider" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </footer>
+            <nav class="navbar-mobile">
+                <div class="container-fluid">
+                    <ul class="navbar-mobile__list list-unstyled">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="@Url.Action("Index", "Home")">
+                                    <i class="fas fa-home"></i>Inicio
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Client")">
+                                    <i class="fas fa-user"></i>Clientes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "AccountClient")">
+                                    <i class="fas fa-credit-card"></i>Cuentas
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AllRequests", "Request")">
+                                    <i class="fas fa-hand-paper"></i>Solicitudes
+                                </a>
+                            </li>
+                            @*<li>
+                                <a href="#">
+                                    <i class="fas fa-calendar-alt"></i>Reportes
+                                </a>
+                            </li>*@
+                        }
+                        else
+                        {
+
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="@Url.Action("Index", "Home")">
+                                    <i class="fas fa-home"></i>Inicio
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("MyRequests", "Request",new { id = User.Identity.GetUserId()})">
+                                    <i class="fas fa-hand-paper"></i>Mis solicitudes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("MyRequests", "Request")">
+                                    <i class="fas fa-credit-card"></i>Estado de Cuenta
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- END HEADER MOBILE-->
+        <!-- MENU SIDEBAR-->
+        <aside class="menu-sidebar d-none d-lg-block">
+            <div class="logo">
+                @title
+            </div>
+            <div class="menu-sidebar__content js-scrollbar1">
+                <nav class="navbar-sidebar">
+                    <ul class="list-unstyled navbar__list">
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="@Url.Action("Index", "Home")">
+                                    <i class="fas fa-home"></i>Inicio
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Client")">
+                                    <i class="fas fa-user"></i>Clientes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "AccountClient")">
+                                    <i class="fas fa-credit-card"></i>Cuentas
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AllRequests", "Request")">
+                                    <i class="fas fa-hand-paper"></i>Solicitudes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fas fa-calendar-alt"></i>Reportes
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+
+                            <li class="active has-sub">
+                                <a class="js-arrow" href="@Url.Action("Index", "Home")">
+                                    <i class="fas fa-home"></i>Inicio
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("MyRequests", "Request",new { id = User.Identity.GetUserId()})">
+                                    <i class="fas fa-hand-paper"></i>Mis solicitudes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("MyAccounts", "AccountClient")">
+                                    <i class="fas fa-credit-card"></i>Estado de Cuenta
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+        <header class="header-desktop">
+            <div class="section__content section__content--p30">
+                <div class="container-fluid">
+                    <div class="header-wrap">
+                        <div class="m-b-100"></div>
+                        <div class="header-button">
+                            <div class="noti-wrap ml-5">
+                                <div class="noti__item js-item-menu">
+                                    <i class="zmdi zmdi-notifications"></i>
+                                    <span class="quantity">3</span>
+                                    <div class="notifi-dropdown js-dropdown">
+                                        <div class="notifi__title">
+                                            <p>You have 3 Notifications</p>
+                                        </div>
+                                        <div class="notifi__item">
+                                            <div class="bg-c1 img-cir img-40">
+                                                <i class="zmdi zmdi-email-open"></i>
+                                            </div>
+                                            <div class="content">
+                                                <p>You got a email notification</p>
+                                                <span class="date">April 12, 2018 06:50</span>
+                                            </div>
+                                        </div>
+                                        <div class="notifi__item">
+                                            <div class="bg-c2 img-cir img-40">
+                                                <i class="zmdi zmdi-account-box"></i>
+                                            </div>
+                                            <div class="content">
+                                                <p>Your account has been blocked</p>
+                                                <span class="date">April 12, 2018 06:50</span>
+                                            </div>
+                                        </div>
+                                        <div class="notifi__item">
+                                            <div class="bg-c3 img-cir img-40">
+                                                <i class="zmdi zmdi-file-text"></i>
+                                            </div>
+                                            <div class="content">
+                                                <p>You got a new file</p>
+                                                <span class="date">April 12, 2018 06:50</span>
+                                            </div>
+                                        </div>
+                                        <div class="notifi__footer">
+                                            <a href="~/Content/#">All notifications</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="account-wrap">
+                                <div class="account-item clearfix js-item-menu">
+                                    <div class="content">
+                                        <a class="js-acc-btn" href="~/Content/#">@User.Identity.Name</a>
+                                    </div>
+                                    <div class="account-dropdown js-dropdown">
+                                        @Html.Partial("_LoginPartial")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        @RenderBody()
+        <div class="row">
+            <div class="col-md-12">
+                <div class="copyright">
+                    <p class="text-center">Copyright © @DateTime.Now.Year by Orbis Alonzo G.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/Scripts/sweetalert.min.js")
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/numeric")
-    @RenderSection("scripts", required: false)
+    <!-- Jquery JS-->
+    <script src="~/Content/vendor/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap JS-->
+    <script src="~/Content/vendor/bootstrap-4.1/popper.min.js"></script>
+    <script src="~/Content/vendor/bootstrap-4.1/bootstrap.min.js"></script>
+    <!-- Vendor JS       -->
+    <script src="~/Content/vendor/slick/slick.min.js">
+    </script>
+    <script src="~/Content/vendor/wow/wow.min.js"></script>
+    <script src="~/Content/vendor/animsition/animsition.min.js"></script>
+    <script src="~/Content/vendor/bootstrap-progressbar/bootstrap-progressbar.min.js">
+    </script>
+    <script src="~/Content/vendor/counter-up/jquery.waypoints.min.js"></script>
+    <script src="~/Content/vendor/counter-up/jquery.counterup.min.js">
+    </script>
+    <script src="~/Content/vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="~/Content/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="~/Content/vendor/chartjs/Chart.bundle.min.js"></script>
+    <script src="~/Content/vendor/select2/select2.min.js">
+    </script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Main JS-->
+    <script src="~/Content/js/main.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
+
 </html>

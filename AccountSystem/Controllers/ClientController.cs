@@ -86,7 +86,7 @@ namespace AccountSystem.Controllers
                 try
                 {
                     var fileName = Path.GetFileName(file.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Content/avatar/"),
+                    string path = Path.Combine(Server.MapPath("~/Content/"),
                     Path.GetFileName(file.FileName));
 
                     UploadImgViewModel model = new UploadImgViewModel

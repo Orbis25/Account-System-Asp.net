@@ -1,47 +1,141 @@
-﻿
-@{ 
-    ViewBag.Title = "Inicio";
-}
+﻿<!-- END MENU SIDEBAR-->
+<!-- PAGE CONTAINER-->
+<div class="page-container">
+    <!-- MAIN CONTENT-->
+    <div class="main-content">
+        <div class="section__content section__content--p30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="overview-wrap">
+                            <h2 class="title-1">Inicio</h2>
+                        </div>
+                    </div>
+                </div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="row m-t-25">
+                        <div class="col-sm-6 col-lg-12">
+                            <div class="overview-item overview-item--c1">
+                                <div class="overview__inner">
+                                    <div class="overview-box clearfix">
+                                        <div class="icon">
+                                            <i class="zmdi zmdi-account-o"></i>
+                                        </div>
+                                        <div class="text">
+                                            <h2>@ViewBag.Menbers</h2>
+                                            <span>Cuentas</span>
+                                        </div>
+                                    </div>
+                                    <div class="overview-chart">
+                                        <canvas id="widgetChart1"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <div class="overview-item overview-item--c2">
+                                <div class="overview__inner">
+                                    <div class="overview-box clearfix">
+                                        <div class="icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="text">
+                                            <h2>@ViewBag.Account</h2>
+                                            <span>Clientes</span>
+                                        </div>
+                                    </div>
+                                    <div class="overview-chart">
+                                        <canvas id="widgetChart2"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <div class="overview-item overview-item--c3">
+                                <div class="overview__inner">
+                                    <div class="overview-box clearfix">
+                                        <div class="icon">
+                                            <i class="zmdi zmdi-money"></i>
+                                        </div>
+                                        <div class="text">
+                                            <h2>$@ViewBag.Debs</h2>
+                                            <span>Total en deudas</span>
+                                        </div>
+                                    </div>
+                                    <div class="overview-chart">
+                                        <canvas id="widgetChart3"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-<div class="container mt-5">
-    <div class="row justify-content-around">
-        <div class="col- mt-1">
-            <div class="card" style="width: 30rem;">
-                <div class="card-body">
-                    <div class="text-center" ><i class="far fa-user text-primary" style="font-size:200px"></i></div>
-                    <h5 class="card-title text-center m-3" >Clientes</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Mantenimiento de Clientes</h6>
-                    <p class="card-text">
-                        En esta parte puedes realizar las siguientes acciones:
-                        <ul>
-                            <li>Agregar Clientes</li>
-                            <li>Ver , Actualizar y eliminar Clientes</li>
-                            <li>Crear Cuentas para Clientes</li>
-                        </ul>
-                    </p>
-                    @Html.ActionLink("Entrar", "Client", null, new { @class = "btn btn-primary btn-block " })
-                </div>
-            </div>
-        </div>
-        <div class="col-  mt-1 ">
-            <div class="card " style="width: 30rem;">
-                <div class="card-body">
-                    <div class="text-center"><i class="fas fa-archive text-dark" style="font-size:200px"></i></div>
-                    <h5 class="card-title text-center m-3">Proximamente Inventario</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">Mantenimiento de Productos</h6>
-                    <p class="card-text">
-                        En esta parte podras realizar las siguientes acciones:
-                        <ul>
-                            <li>Agregar Productos</li>
-                            <li>Ver , Actualizar y eliminar Productos</li>
-                            <li>Levar la lista de todos los productos</li>
-                        </ul>
-                    </p>
-                    <button class="btn btn-dark btn-block">Entrar</button>
-                </div>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="row m-t-25">
+                        <div class="col-sm-6 col-lg-12">
+                            <div class="overview-item overview-item--c1">
+                                <div class="overview__inner">
+                                    <div class="overview-box clearfix">
+                                        <div class="icon">
+                                            <i class="zmdi zmdi-account-o"></i>
+                                        </div>
+                                        <div class="text">
+                                            <h2>@ViewBag.myAccounts</h2>
+                                            <span>Cuentas</span>
+                                        </div>
+                                    </div>
+                                    <div class="overview-chart">
+                                        <canvas id="widgetChart1"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <div class="overview-item overview-item--c2">
+                                <div class="overview__inner">
+                                    <div class="overview-box clearfix">
+                                        <div class="icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="text">
+                                            <h2>@ViewBag.myRequest</h2>
+                                            <span>Solicitudes</span>
+                                        </div>
+                                    </div>
+                                    <div class="overview-chart">
+                                        <canvas id="widgetChart2"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <div class="overview-item overview-item--c3">
+                                <div class="overview__inner">
+                                    <div class="overview-box clearfix">
+                                        <div class="icon">
+                                            <i class="zmdi zmdi-money"></i>
+                                        </div>
+                                        <div class="text">
+                                            <h2>@ViewBag.myDebs</h2>
+                                            <span>Deudas</span>
+                                        </div>
+                                    </div>
+                                    <div class="overview-chart">
+                                        <canvas id="widgetChart3"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
             </div>
         </div>
     </div>
 </div>
-
 

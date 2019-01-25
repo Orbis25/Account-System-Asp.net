@@ -1,7 +1,8 @@
 ﻿
 @model Model.ViewModels.DetailPageViewModel
 @using Model.Enums;
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://unpkg.com/jspdf-autotable"></script>
 <link href="~/Content/css/bootstrap-datepicker.css" rel="stylesheet" />
 
 <div class="page-container">
@@ -22,7 +23,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="mx-auto d-block">
-                                    <img class="rounded-circle mx-auto d-block" src="~/Content/avatar/@Model.Account.Client.Avatar.ToString()" width="100" alt="Card image cap">
+                                    <img class="rounded-circle mx-auto d-block" src="~/Content/@Model.Account.Client.Avatar.ToString()" width="100" alt="Card image cap">
                                     <h5 class="text-sm-center mt-2 mb-1">@Model.Account.Client.Name @Model.Account.Client.LastName</h5>
                                     <div class="location text-sm-center">
                                         <i class="fa fa-map-marker"></i> @Model.Account.Client.PhoneNumber
@@ -62,13 +63,13 @@
                                             Saldar
                                         </button>
                                     }
-                                    @Html.ActionLink("Generar Constancia", "GeneratePdf", "AccountClient", new { id = Model.Account.Id }, new { @class = "btn btn-danger btn-block mt-2 " })
+                                    @*@Html.ActionLink("Generar Constancia", "GeneratePdf", "AccountClient", new { id = Model.Account.Id }, new { @class = "btn btn-danger btn-block mt-2 " })*@
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-start">
+                <div class="row justify-content-center">
                     <div class="col-6">
                         <h3 class="mb-2">Deudas</h3>
                         <form action="/AccountClient/filter" method="get">
@@ -81,22 +82,27 @@
                             </div>
                         </form>
                     </div>
+                    <button class="btn  btn-danger ml-5" onclick="downloadPdf('@Model.Account.Name','@Model.Account.Total','@ViewBag.Total','@Model.Account.Client.Name  @Model.Account.Client.LastName','@Model.Account.Name')">Exportar a Pdf</button>
                 </div>
-                <div class="row m-t-30">
+                <div class="row m-t-30" id="container">
                     <div class="col-md-12">
                         <!-- DATA TABLE-->
                         <div class="table-responsive m-b-40">
-                            <table class="table table-borderless table-data3">
+                            <table class="table table-borderless table-data3" id="table">
                                 <thead>
                                     <tr>
                                         <th>Monto</th>
                                         <th>Fecha</th>
                                         <th>Descripcion</th>
-                                        <th>Pagos</th>
+                                        <th id="h-pagos">Pagos</th>
 
                                         @if (User.IsInRole("Admin"))
                                         {
-                                            <th>Accion</th>
+                                            <th>Accion/Estado</th>
+                                        }
+                                        else
+                                        {
+                                           <th>Estado</th>
                                         }
 
                                     </tr>
@@ -112,41 +118,53 @@
 
                                         string deleted = deb.Deleted == Deleted.yes ? "text-white bg-danger" : string.Empty;
                                         paid = deb.Deleted == Deleted.payment ? "bg-success text-white" : string.Empty;
-                                        <tr>
-                                            <td class="@deleted @paid">@deb.Money</td>
-                                            <td class="@deleted  @paid">@deb.DateTime.ToString("dd/MM/yyyy")</td>
-                                            @{
-                                                deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
-                                            }
-                                            <td class="@deleted  @paid">@deb.Description</td>
-                                            @if (deb.Deleted != Deleted.yes)
+                                    <tr>
+                                        <td class="@deleted @paid">@deb.Money</td>
+                                        <td class="@deleted  @paid">@deb.DateTime.ToString("dd/MM/yyyy")</td>
+                                        @{
+                                            deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
+                                        }
+                                        <td class="@deleted  @paid">@deb.Description</td>
+                                        @if (deb.Deleted != Deleted.yes)
+                                        {
+                                            <td class="@deleted  @paid"><button id="btn-detalles" class="text-white btn btn-dark" data-toggle="modal" onclick="GetAllPayment(@deb.Id)" data-target="#exampleModal6"><i class="fas fa-eye"></i></button></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="@deleted  @paid">-----------</td>
+                                        }
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            if (deb.Deleted != Deleted.yes && deb.Deleted != Deleted.payment)
                                             {
-                                                <td class="@deleted  @paid"><button class="btn btn-sm btn-dark" data-toggle="modal" onclick="GetAllPayment(@deb.Id)" data-target="#exampleModal6">Detalles</button></td>
+                                                <td>
+                                                    <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
+                                                    <button class="far fa-edit text-info" onclick="GetByIdDeb(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
+                                                    Activa
+                                                </td>
+                                            }
+                                            else if (deb.Deleted == Deleted.payment)
+                                            {
+                                                <td class="@paid ">Pagada</td>
                                             }
                                             else
                                             {
-                                                <td class="@deleted  @paid">-----------</td>
+                                                <td class="@deleted ">Eliminada</td>
                                             }
-                                            @if (User.IsInRole("Admin"))
+                                        }
+                                        else
+                                        {
+                                            if (deb.Deleted == Deleted.payment)
                                             {
-                                                if (deb.Deleted != Deleted.yes && deb.Deleted != Deleted.payment)
-                                                {
-                                                    <td>
-                                                        <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
-                                                        <b> | </b>
-                                                        <button class="far fa-edit text-info" onclick="GetById(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
-                                                    </td>
-                                                }
-                                                else if (deb.Deleted == Deleted.payment)
-                                                {
-                                                    <td class="@paid ">Pagada</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="@deleted ">Eliminada</td>
-                                                }
+                                                <td class="@paid ">Pagada</td>
                                             }
-                                        </tr>
+                                            else
+                                            {
+                                                <td>Activa</td>
+
+                                            }
+                                        }
+                                    </tr>
                                     }
                                 </tbody>
                             </table>
@@ -349,14 +367,12 @@
                     <div class="col-12">
                         <form action="/Payment/Add" method="post">
                             <input type="hidden" name="DebId" id="DebId" value="" />
-
                             @if (User.IsInRole("Admin"))
                             {
                                 <span id="UserRole" style="display:none">True</span>
                                 <input type="hidden" name="AccountId" value="@Model.Account.Id" />
                                 <h6>Desea abonar?</h6>
                                 @Html.AntiForgeryToken()
-
                                 <div>
                                     <label>Monto</label>
                                     <input type="number" required class="form-control" name="Quantity" value="" />
@@ -366,18 +382,21 @@
                                     <button type="button" onclick="PayDeb()" class="btn btn-danger mt-2">Saldar</button>
                                 </div>
                             }
+                                <div>
+                                    <button class="btn mt-2 btn-danger" type="button" onclick="downloadPdfPayments('@Model.Account.Name','@Model.Account.Total','@ViewBag.Total','@Model.Account.Client.Name  @Model.Account.Client.LastName','@Model.Account.Name')">Exportar a Pdf</button>
+                                </div>
                         </form>
-
                     </div>
                 </div>
-                <table class="table table-borderless table-data3 mt-5">
+                <table id="bady-table1" class="table table-borderless table-data3 mt-5">
                     <thead>
                         <tr>
                             <th>Monto</th>
                             <th>Fecha</th>
                             @if (User.IsInRole("Admin"))
                             {
-                                <th>Accion</th>}
+                                <th>Accion</th>
+                            }
                         </tr>
                     </thead>
                     <tbody id="bady-table"></tbody>
@@ -460,6 +479,8 @@ function GetAllPayment(value) {
             location.reload();
         })
     </script>
+
+
 }
 
 
