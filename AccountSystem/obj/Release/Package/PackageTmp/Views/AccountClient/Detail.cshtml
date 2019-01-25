@@ -100,6 +100,10 @@
                                         {
                                             <th>Accion/Estado</th>
                                         }
+                                        else
+                                        {
+                                           <th>Estado</th>
+                                        }
 
                                     </tr>
                                 </thead>
@@ -114,41 +118,53 @@
 
                                         string deleted = deb.Deleted == Deleted.yes ? "text-white bg-danger" : string.Empty;
                                         paid = deb.Deleted == Deleted.payment ? "bg-success text-white" : string.Empty;
-                                        <tr>
-                                            <td class="@deleted @paid">@deb.Money</td>
-                                            <td class="@deleted  @paid">@deb.DateTime.ToString("dd/MM/yyyy")</td>
-                                            @{
-                                                deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
-                                            }
-                                            <td class="@deleted  @paid">@deb.Description</td>
-                                            @if (deb.Deleted != Deleted.yes)
+                                    <tr>
+                                        <td class="@deleted @paid">@deb.Money</td>
+                                        <td class="@deleted  @paid">@deb.DateTime.ToString("dd/MM/yyyy")</td>
+                                        @{
+                                            deb.Description = deb.Description == null ? "Ninguna" : deb.Description;
+                                        }
+                                        <td class="@deleted  @paid">@deb.Description</td>
+                                        @if (deb.Deleted != Deleted.yes)
+                                        {
+                                            <td class="@deleted  @paid"><button id="btn-detalles" class="text-white btn btn-dark" data-toggle="modal" onclick="GetAllPayment(@deb.Id)" data-target="#exampleModal6"><i class="fas fa-eye"></i></button></td>
+                                        }
+                                        else
+                                        {
+                                            <td class="@deleted  @paid">-----------</td>
+                                        }
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            if (deb.Deleted != Deleted.yes && deb.Deleted != Deleted.payment)
                                             {
-                                                <td class="@deleted  @paid"><button id="btn-detalles" class="text-white btn btn-dark" data-toggle="modal" onclick="GetAllPayment(@deb.Id)" data-target="#exampleModal6"><i class="fas fa-eye"></i></button></td>
+                                                <td>
+                                                    <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
+                                                    <button class="far fa-edit text-info" onclick="GetByIdDeb(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
+                                                    Activa
+                                                </td>
+                                            }
+                                            else if (deb.Deleted == Deleted.payment)
+                                            {
+                                                <td class="@paid ">Pagada</td>
                                             }
                                             else
                                             {
-                                                <td class="@deleted  @paid">-----------</td>
+                                                <td class="@deleted ">Eliminada</td>
                                             }
-                                            @if (User.IsInRole("Admin"))
+                                        }
+                                        else
+                                        {
+                                            if (deb.Deleted == Deleted.payment)
                                             {
-                                                if (deb.Deleted != Deleted.yes && deb.Deleted != Deleted.payment)
-                                                {
-                                                    <td>
-                                                        <button class="fas fa-trash-alt text-danger" onclick="remove(@deb.Id,'/Deb/Delete','desea eliminarla')"></button>
-                                                        <button class="far fa-edit text-info" onclick="GetByIdDeb(@deb.Id)" data-toggle="modal" data-target="#exampleModal4"></button>
-                                                        Activa
-                                                    </td>
-                                                }
-                                                else if (deb.Deleted == Deleted.payment)
-                                                {
-                                                    <td class="@paid ">Pagada</td>
-                                                }
-                                                else
-                                                {
-                                                    <td class="@deleted ">Eliminada</td>
-                                                }
+                                                <td class="@paid ">Pagada</td>
                                             }
-                                        </tr>
+                                            else
+                                            {
+                                                <td>Activa</td>
+
+                                            }
+                                        }
+                                    </tr>
                                     }
                                 </tbody>
                             </table>
@@ -379,7 +395,8 @@
                             <th>Fecha</th>
                             @if (User.IsInRole("Admin"))
                             {
-                                <th>Accion</th>}
+                                <th>Accion</th>
+                            }
                         </tr>
                     </thead>
                     <tbody id="bady-table"></tbody>
