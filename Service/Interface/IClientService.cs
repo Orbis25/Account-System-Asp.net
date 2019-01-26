@@ -16,6 +16,7 @@ namespace Service.Interface
         Client GetByIdUser(string id);
         bool UpdateImg(UploadImgViewModel model);
         IEnumerable<Client> GetAll();
+        bool VerifyClientWithAccount(string idUser, int id);
     }
 
 }

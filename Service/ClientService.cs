@@ -35,6 +35,7 @@ namespace Service
             }
         }
 
+
         public bool Delete(int id)
         {
 
@@ -195,6 +196,19 @@ namespace Service
                 return null;
             }
             return model;
+        }
+
+        public bool VerifyClientWithAccount(string idUser, int id)
+        {
+            try
+            {
+                _dbContext.Clients.Single(x => x.ApplicationUserId == idUser && x.Id == id);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ namespace AccountSystem.Controllers
             ViewBag.myRequest = _homeService.GetAllMyRequest(User.Identity.GetUserId());
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Client()
         {
             return View();

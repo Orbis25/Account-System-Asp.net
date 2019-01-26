@@ -68,8 +68,17 @@ namespace AccountSystem.Controllers
 
         public ActionResult ViewProfile(int id)
         {
-            var model = _clientService.Get(id);
-            return View("UserProfile", model);
+            if (User.IsInRole("Admin"))
+            {
+                var model = _clientService.Get(id);
+                return View("UserProfile", model);
+            }
+            else if (_clientService.VerifyClientWithAccount(User.Identity.GetUserId(),id))
+            {
+                var model = _clientService.Get(id);
+                return View("UserProfile", model);
+            }
+            return RedirectToAction("UserProfile");
         }
 
         //

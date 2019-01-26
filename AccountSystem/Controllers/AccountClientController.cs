@@ -81,6 +81,7 @@ namespace AccountSystem.Controllers
         //v2.0-------------------------------------------------
         [ValidateAntiForgeryToken]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Add(Account model)
         {
            model.CreatedAt = DateTime.Now;
@@ -181,21 +182,43 @@ namespace AccountSystem.Controllers
         public ActionResult Detail(int id, int page = 1)
         {
             page = page == 0 ? 1 : page;
-            var model = _repository.GetWithClientAndDebs(id, page);
-            ViewBag.Total = _debService.SumAll(id);
-            if (model != null)
+            if (User.IsInRole("Admin"))
             {
-                if (TempData["response"] != null)
+                var model = _repository.GetWithClientAndDebs(id, page);
+                ViewBag.Total = _debService.SumAll(id);
+                if (model != null)
                 {
-                    ViewBag.response = TempData["response"].ToString();
-                    ViewBag.icon = TempData["icon"].ToString();
+                    if (TempData["response"] != null)
+                    {
+                        ViewBag.response = TempData["response"].ToString();
+                        ViewBag.icon = TempData["icon"].ToString();
+                    }
+                    else
+                    {
+                        ViewBag.response = null;
+                    }
                 }
-                else
-                {
-                    ViewBag.response = null;
-                }
+                return View(model);
             }
-            return View(model);
+            else if (_repository.VerifyClientWithAccount(User.Identity.GetUserId(),id))
+            {
+                var model = _repository.GetWithClientAndDebs(id, page);
+                ViewBag.Total = _debService.SumAll(id);
+                if (model != null)
+                {
+                    if (TempData["response"] != null)
+                    {
+                        ViewBag.response = TempData["response"].ToString();
+                        ViewBag.icon = TempData["icon"].ToString();
+                    }
+                    else
+                    {
+                        ViewBag.response = null;
+                    }
+                }
+                return View(model);
+            }
+            return RedirectToAction("MyAccounts");
         }
 
         [HttpGet]
@@ -210,7 +233,7 @@ namespace AccountSystem.Controllers
                 ViewBag.other = vm.IdAccount;
                 return View("Detail", model);
             }
-            return View("Detail", model);
+            return View("Detail", _repository.GetWithClientAndDebs(vm.IdAccount));
         }
     }
 }

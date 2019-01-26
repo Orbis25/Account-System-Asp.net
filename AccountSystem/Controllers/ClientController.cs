@@ -25,6 +25,7 @@ namespace AccountSystem.Controllers
             _accountService = accountService;
             _requestService = requestService;
         }
+        [Authorize(Roles = "Admin")]
         public ActionResult Index(int page = 1)
         {
             var model = _repository.GetAllIndex(page);
@@ -38,6 +39,7 @@ namespace AccountSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult Search(string parameter = "" , int page = 1)
         {

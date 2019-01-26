@@ -112,6 +112,7 @@ namespace Service
             return result;
         }
 
+
         public DetailPageViewModel GetWithClientAndDebs(int id , int page = 1)
         {
             var result = new DetailPageViewModel();
@@ -137,7 +138,7 @@ namespace Service
                 result.TotalOfRegister = totalOfDebs;
                 result.RegisterByPage = pageToQuantity;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 result = null;
             }
@@ -264,6 +265,24 @@ namespace Service
                 return true;
             }
             catch (Exception )
+            {
+                return false;
+            }
+        }
+
+
+
+        public bool VerifyClientWithAccount(string idUser, int id)
+        {
+            try
+            {
+                if (_dbContext.Clients.Single(x => x.ApplicationUserId == idUser && x.Id == id) != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
             {
                 return false;
             }

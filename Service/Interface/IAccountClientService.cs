@@ -19,6 +19,6 @@ namespace Service.Interface
         bool Report(int id , string pathReport , string PathPdf);
         bool VerifyRequestAndClient(int request, int client);
         AccountPageViewModel MyAccounts(string id , int page);
-         
+        bool VerifyClientWithAccount(string idUser, int id);
     }
 }
